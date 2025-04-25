@@ -1,0 +1,328 @@
+
+
+
+.hero-section {
+  position: relative;
+  height: 100vh;
+  background-image: url('../images/Gndec\ main\ img.jpg'); /* Replace with your image file name */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: auto;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Opacity */
+  z-index: 1;
+}
+
+.hero-content {
+  color: white;
+  position: relative;
+  z-index: 2;
+  padding: 1rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+}
+
+/* navbar cloase */
+
+
+
+
+
+
+
+
+/* rules :start */
+
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* chatgpt decoration css */
+
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  color: #333;
+  padding-top: 80px; /* to avoid overlap from fixed navbar */
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background: url('../images/Gndec\ main\ img.jpg') center center/cover no-repeat;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.hero-content h3 {
+  margin: 20px 0;
+  font-weight: 500;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+}
+
+/* Section Titles */
+h2, h6 {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* General Card Style */
+.card-style {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 900px;
+  transition: transform 0.3s ease;
+}
+
+.card-style:hover {
+  transform: translateY(-5px);
+}
+
+/* Tabs Section */
+.tab {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  margin: 10px auto 20px;
+  padding: 10px;
+  max-width: 90%;
+}
+
+.tab button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.tab button:hover {
+  background-color: #0d8af0;
+}
+
+.tabcontent {
+  display: none;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.tabcontent.active {
+  display: block;
+}
+
+.tabcontent h3 {
+  color: #198754;
+}
+
+/* Rules Section */
+.rules-section {
+  background: #e3f2fd;
+  padding: 40px 20px;
+}
+
+.rules-section h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* FAQ Section */
+.faq-section {
+  background: #f1f8e9;
+  padding: 40px 20px;
+}
+
+.faq-section h2 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.faq-section .card {
+  border-radius: 20px;
+  margin-bottom: 15px;
+  border: none;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+}
+
+.faq-section .card-header {
+  background-color: #a5d6a7;
+  border-radius: 20px 20px 0 0;
+}
+
+.faq-section .btn {
+  font-weight: bold;
+  color: #2e7d32;
+  text-align: left;
+  width: 100%;
+  font-size: 16px;
+}
+
+.faq-section .card-body {
+  background-color: #ffffff;
+  border-radius: 0 0 20px 20px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .tab button {
+    font-size: 14px;
+    padding: 8px 16px;
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .tabcontent {
+    padding: 15px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

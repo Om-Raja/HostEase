@@ -1,0 +1,52 @@
+body {
+    overflow-x: hidden;
+  }
+  
+  .sidebar {
+    height: 100vh;
+    position: fixed;
+    width: 250px;
+    background-color: #343a40;
+    color: white;
+    padding-bottom: 50px;
+  }
+  
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    font-size: 16px;
+  }
+  
+  .sidebar a:hover {
+    background-color: #495057;
+  }
+  
+  .logout {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+  }
+  
+  .content {
+    margin-left: 250px;
+    padding: 30px;
+  }
+  
+  @media (max-width: 768px) {
+    .sidebar {
+      position: relative;
+      width: 100%;
+      height: auto;
+    }
+  
+    .content {
+      margin-left: 0;
+    }
+  }
+  
+  .form-section {
+    display: none;
+  }
+ 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostEase Login</title>
+  <link rel="stylesheet" href="../CSS/login.css" />
+  
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <img src="../images/login-cover.svg" alt="Login Illustration" />
+    </div>
+    <div class="right">
+      <form class="login-form">
+        <img src="../images/logo gndec new.jpg" class="logo" alt="GNDEC Logo" />
+        <h2>Login Form</h2>
+        <p>Please log in to your account</p>
+
+        <input type="email" placeholder="Email" required />
+        <input type="password" placeholder="Enter Password" required />
+
+        <!-- CAPTCHA START -->
+        <div class="form-group">
+          <label for="captcha-answer">Solve: <span id="captcha-question"></span></label>
+          <button type="button" onclick="generateCaptcha()">Reload CAPTCHA</button>
+          <input type="text" id="captcha-answer" class="form-control" placeholder="Your Answer" required />
+          <input type="hidden" id="captcha-solution" />
+          
+        </div>
+        <!--  CAPTCHA END -->
+
+        <p class="note">If you Forget Password Contact to Admin</p>
+        <button type="submit" class="btn">Sign in</button>
+        <p class="register">Don't have an account yet? <a href="../HTML/user.html">Click here</a></p>
+        <p class="register"><a href="index.html">Home Page</a></p>
+      </form>
+    </div>
+  </div>
+
+
+
+
+
+  <script>
+    function generateCaptcha() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      const question = `${num1} + ${num2}`;
+      const answer = num1 + num2;
+
+      document.getElementById("captcha-question").textContent = question;
+      document.getElementById("captcha-solution").value = answer;
+      document.getElementById("captcha-answer").value = ""; // Clear input on reload
+    }
+
+    // Generate CAPTCHA on page load
+    window.onload = generateCaptcha;
+
+    // Check CAPTCHA before form submission
+    document.querySelector(".login-form").addEventListener("submit", function (e) {
+      const userAnswer = document.getElementById("captcha-answer").value;
+      const correctAnswer = document.getElementById("captcha-solution").value;
+
+      if (parseInt(userAnswer) !== parseInt(correctAnswer)) {
+        e.preventDefault();
+        alert("Incorrect CAPTCHA answer!");
+      }
+    });
+  </script>
+</body>
+</html>
