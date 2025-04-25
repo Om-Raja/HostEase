@@ -1,14 +1,14 @@
 const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const otpStore = require("../models/otp");
+const Otp = require("../models/otp"); // Corrected the import to match the usage
 
 const signUpController = async function (req, res) {
   try {
     const { name, email, password, role } = req.body;
 
     // Check if email is verified
-    const otpRecord = await Otp.findOne({ email });
+    const otpRecord = await Otp.findOne({ email }); // Updated to use the corrected import
     if (!otpRecord || !otpRecord.verified) {
       return res.status(400).json({ message: "Email not verified" });
     }
@@ -29,7 +29,7 @@ const signUpController = async function (req, res) {
     newUser.password = await bcrypt.hash(password, 10);
     await newUser.save();
     // Delete the OTP record after successful signup
-    await Otp.deleteOne({ email });
+    await Otp.deleteOne({ email }); // Updated to use the corrected import
 
     res.status(201).json({
       message: "Signup successful",
