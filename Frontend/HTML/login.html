@@ -18,8 +18,8 @@
         <h2>Login Form</h2>
         <p>Please log in to your account</p>
 
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Enter Password" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Enter Password" required />
 
         <!-- CAPTCHA START -->
         <div class="form-group">
@@ -66,6 +66,36 @@
       if (parseInt(userAnswer) !== parseInt(correctAnswer)) {
         e.preventDefault();
         alert("Incorrect CAPTCHA answer!");
+      }
+    });
+
+    document.querySelector('.login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch('http://localhost:3000/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert('Login successful!');
+          // Redirect to user dashboard or another page
+          window.location.href = 'user.html';
+        } else {
+          alert(result.message || 'Login failed!');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again later.');
       }
     });
   </script>
