@@ -44,4 +44,22 @@ const loginValidation = (req, res, next) => {
   return next();
 };
 
-module.exports = { signUpValidation, loginValidation };
+const sendOtpValidation = (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .pattern(new RegExp("^[a-zA-Z0-9]+@[gndec]+\\.ac\\.in$"))
+      .required()
+      .messages({
+        "string.pattern.base":
+          "Email must be a valid GNDEC email (e.g., ram1234567@gndec.ac.in).",
+      }),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: "Bad request", error: error });
+  }
+  return next();
+};
+
+module.exports = { signUpValidation, loginValidation, sendOtpValidation };
