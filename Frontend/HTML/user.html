@@ -302,7 +302,7 @@
 
             setTimeout(() => {
                 toast.remove();
-                localStorage.removeItem('toastMessage');
+                localStorage.removeItem('toastMessage'); // Ensure this is removed after the toast is displayed
             }, 3000);
         }
     });
