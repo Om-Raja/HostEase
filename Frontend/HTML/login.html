@@ -21,16 +21,6 @@
         <input type="email" id="email" placeholder="Email" required />
         <input type="password" id="password" placeholder="Enter Password" required />
 
-        <!-- CAPTCHA START -->
-        <div class="form-group">
-          <label for="captcha-answer">Solve: <span id="captcha-question"></span></label>
-          <button type="button" onclick="generateCaptcha()">Reload CAPTCHA</button>
-          <input type="text" id="captcha-answer" class="form-control" placeholder="Your Answer" required />
-          <input type="hidden" id="captcha-solution" />
-          
-        </div>
-        <!--  CAPTCHA END -->
-
         <p class="note">If you Forget Password Contact to Admin</p>
         <button type="submit" class="btn">Sign in</button>
         <p class="register">Don't have an account yet? <a href="../HTML/user.html">Click here</a></p>
@@ -39,65 +29,36 @@
     </div>
   </div>
 
-
-
-
-
   <script>
-    function generateCaptcha() {
-      const num1 = Math.floor(Math.random() * 10) + 1;
-      const num2 = Math.floor(Math.random() * 10) + 1;
-      const question = `${num1} + ${num2}`;
-      const answer = num1 + num2;
-
-      document.getElementById("captcha-question").textContent = question;
-      document.getElementById("captcha-solution").value = answer;
-      document.getElementById("captcha-answer").value = ""; // Clear input on reload
-    }
-
-    // Generate CAPTCHA on page load
-    window.onload = generateCaptcha;
-
-    // Check CAPTCHA before form submission
-    document.querySelector(".login-form").addEventListener("submit", function (e) {
-      const userAnswer = document.getElementById("captcha-answer").value;
-      const correctAnswer = document.getElementById("captcha-solution").value;
-
-      if (parseInt(userAnswer) !== parseInt(correctAnswer)) {
-        e.preventDefault();
-        alert("Incorrect CAPTCHA answer!");
-      }
-    });
-
-    document.querySelector('.login-form').addEventListener('submit', async function (e) {
+    function handleLoginFormSubmit(e) {
       e.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
 
-      try {
-        const response = await fetch('http://localhost:3000/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
+      fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            alert('Login successful!');
+            window.location.href = 'user.html';
+          } else {
+            alert(result.message || 'Login failed!');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again later.');
         });
+    }
 
-        const result = await response.json();
-
-        if (response.ok) {
-          alert('Login successful!');
-          // Redirect to user dashboard or another page
-          window.location.href = 'user.html';
-        } else {
-          alert(result.message || 'Login failed!');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again later.');
-      }
-    });
+    document.querySelector('.login-form').addEventListener('submit', handleLoginFormSubmit);
   </script>
 </body>
 </html>
