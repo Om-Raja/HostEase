@@ -31,31 +31,38 @@
 
   <script>
     function handleLoginFormSubmit(e) {
-      e.preventDefault();
+        e.preventDefault();
 
-      const email = document.querySelector('input[type="email"]').value;
-      const password = document.querySelector('input[type="password"]').value;
+        const email = document.querySelector('input[type="email"]').value;
+        const password = document.querySelector('input[type="password"]').value;
 
-      fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            alert('Login successful!');
-            window.location.href = 'user.html';
-          } else {
-            alert(result.message || 'Login failed!');
-          }
+        fetch('http://localhost:3000/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
         })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('An error occurred. Please try again later.');
-        });
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    if (result.role === 'admin') {
+                        localStorage.setItem('toastMessage', 'Login successful!');
+                        window.location.href = 'admin.html';
+                    } else if (result.role === 'student') {
+                        localStorage.setItem('toastMessage', 'Login successful!');
+                        window.location.href = 'user.html';
+                    } else {
+                        alert('Unknown role. Please contact support.');
+                    }
+                } else {
+                    alert(result.message || 'Login failed!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
     }
 
     document.querySelector('.login-form').addEventListener('submit', handleLoginFormSubmit);

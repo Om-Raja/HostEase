@@ -68,6 +68,7 @@ const loginController = async function (req, res) {
           token,
           email,
           name: user.name,
+          role: user.role, // Include role in the response
         });
       }
       res.status(401).json({
