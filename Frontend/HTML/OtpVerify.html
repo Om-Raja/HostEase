@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OTP Verification</title>
+  <style>
+    body {
+      background: #e9f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .otp-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 24px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .message {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="otp-box">
+    <h2>Enter OTP</h2>
+
+    <input type="email" id="email" readonly />
+    <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" />
+    <button onclick="verifyOtp()">Verify</button>
+    <p style="font-size: 13px;">Check your GNDEC webmail for OTP. It may take few minutes to recieve OTP</p>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    // Fetch and prefill email
+    const emailInput = document.getElementById("email");
+    const messageDiv = document.getElementById("message");
+    const storedEmail = localStorage.getItem("email");
+
+    if (storedEmail) {
+      emailInput.value = storedEmail;
+    } else {
+      alert("No email found. Redirecting...");
+      window.location.href = "sendOtp.html";
+    }
+
+    // Verify OTP Function
+    const verifyOtp = async () => {
+      const otp = document.getElementById("otp").value;
+
+      if (!otp || otp.length < 4) {
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Please enter a valid OTP.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/auth/verify-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email: storedEmail, otp })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          messageDiv.style.color = "green";
+          messageDiv.textContent = result.message || "OTP verified successfully!";
+        //   localStorage.removeItem("email");
+
+          setTimeout(() => {
+            window.location.href = "signup.html";
+          }, 2000);
+        } else {
+          messageDiv.style.color = "red";
+          messageDiv.textContent = result.error || "OTP verification failed.";
+        }
+
+      } catch (error) {
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Server error. Try again later.";
+        console.error(error);
+      }
+    };
+  </script>
+</body>
+</html>

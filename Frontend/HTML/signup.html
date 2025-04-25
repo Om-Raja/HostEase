@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup</title>
+  <style>
+    body {
+      background: #f0f4f8;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .signup-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .signup-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .message {
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="signup-box">
+    <h2>Signup</h2>
+    <input type="text" id="name" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="ram2215100@gndec.ac.in" readonly />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+    <button onclick="signup()">Register</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    // Populate the readonly email field from localStorage
+    const emailFromStorage = localStorage.getItem("email");
+    const emailInput = document.getElementById("email");
+  
+    if (emailFromStorage) {
+      emailInput.value = emailFromStorage;
+    } else {
+      alert("No email found. Redirecting...");
+      window.location.href = "sendOtp.html"; 
+    }
+  
+    function signup() {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const message = document.getElementById("message");
+
+  // Basic validations
+  if (!name || !email || !password || !confirmPassword) {
+    message.style.color = "red";
+    message.textContent = "Please fill in all fields.";
+    return;
+  }
+
+  if (!email.endsWith("@gndec.ac.in")) {
+    message.style.color = "red";
+    message.textContent = "Please use your Verified GNDEC email.";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    message.style.color = "red";
+    message.textContent = "Passwords does not match.";
+    return;
+  }
+
+  // Send POST request to backend
+  fetch("http://localhost:3000/auth/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      password: password
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      message.style.color = "green";
+      message.textContent = "Signup successful! Redirecting to login...";
+      localStorage.removeItem("email");
+
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 2000);
+    } else {
+      message.style.color = "red";
+      message.textContent = data.message || "Signup failed.";
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    message.style.color = "red";
+    message.textContent = "Something went wrong. Please try again.";
+  });
+}
+
+  </script>
+  
+</body>
+</html>
