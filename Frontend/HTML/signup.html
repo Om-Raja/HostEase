@@ -16,7 +16,7 @@
 
     .signup-box {
       background: #fff;
-      padding: 30px;
+      padding: 60px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 100%;
@@ -32,15 +32,15 @@
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 3px solid #ccc;
+      border-radius: 12px;
       font-size: 16px;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      background-color: #28a745;
+      background-color: rgb(204, 44, 204);
       color: white;
       border: none;
       border-radius: 8px;
@@ -49,7 +49,7 @@
     }
 
     button:hover {
-      background-color: #218838;
+      background-color: #0056b3;
     }
 
     .message {
@@ -61,17 +61,17 @@
 </head>
 <body>
   <div class="signup-box">
-    <h2>Signup</h2>
+    <h2>Signup</h2><hr><br>
     <input type="text" id="name" placeholder="Full Name" required />
     <input type="email" id="email" placeholder="ram2215100@gndec.ac.in" readonly />
     <input type="password" id="password" placeholder="Password" required />
-    <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+    <input type="password" id="confirmPassword" placeholder="Confirm Password" required /><br><br>
     <button onclick="signup()">Register</button>
     <div class="message" id="message"></div>
   </div>
 
   <script>
-    // Populate the readonly email field from localStorage
+    //Populate the readonly email field from localStorage
     const emailFromStorage = localStorage.getItem("email");
     const emailInput = document.getElementById("email");
   

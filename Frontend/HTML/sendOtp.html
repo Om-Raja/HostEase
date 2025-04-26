@@ -15,22 +15,23 @@
     }
     .email-box {
       background: #fff;
-      padding: 30px;
-      border-radius: 12px;
+      padding: 70px;
+      border-radius: 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
+    
     }
     input[type="email"] {
       width: 100%;
       padding: 12px;
       margin: 12px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 3px solid #ccc;
+      border-radius: 12px;
       font-size: 16px;
     }
     button {
       padding: 12px 24px;
-      background-color: #007bff;
+      background-color: rgb(204, 44, 204);
       color: white;
       border: none;
       border-radius: 8px;
@@ -49,11 +50,21 @@
 </head>
 <body>
   <div class="email-box">
-    <h2>Email Verification</h2>
+    <h2>Student Email Verification</h2>
+    <hr>
+    <br>
+
+    <p style="font-size: 13px;"><strong>Note:</strong>Enter your GNDEC webmail Only</p>
+
     <input type="email" id="email" placeholder="ram2215100@gndec.ac.in" required />
+    <br><br>
     <button onclick="verifyEmail()">Generate OTP</button>
     <div class="message" id="message"></div>
-    <p style="font-size: 13px;">You will recieve OTP on your GNDEC webmail</p>
+   
+<br>
+      <a style="text-decoration: none;" href="login.html">🔒 Already Registered? Login</a><br><br>
+      <a style="text-decoration: none;" href="index.html">🏠 Go to Home Page</a>
+  
   </div>
 
   <script>

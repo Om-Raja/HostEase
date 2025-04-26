@@ -15,8 +15,8 @@
     }
     .otp-box {
       background: #fff;
-      padding: 30px;
-      border-radius: 12px;
+      padding: 60px;
+      border-radius: 15px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
       width: 300px;
@@ -25,13 +25,13 @@
       width: 100%;
       padding: 12px;
       margin: 12px 0;
-      border: 1px solid #ccc;
+      border: 3px solid #ccc;
       border-radius: 8px;
       font-size: 16px;
     }
     button {
       padding: 12px 24px;
-      background-color: #28a745;
+      background-color: rgb(204, 44, 204);
       color: white;
       border: none;
       border-radius: 8px;
@@ -39,7 +39,7 @@
       cursor: pointer;
     }
     button:hover {
-      background-color: #218838;
+      background-color: #0056b3;
     }
     .message {
       margin-top: 12px;
@@ -49,12 +49,13 @@
 </head>
 <body>
   <div class="otp-box">
-    <h2>Enter OTP</h2>
-
+    <h2>Enter OTP</h2><hr>
+    <br>
+    <p style="font-size: 13px;"><strong>Note:</strong>Check your GNDEC webmail for OTP. It may take 1-2 minutes to recieve OTP</p>
     <input type="email" id="email" readonly />
-    <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" />
+    <input type="text" id="otp" placeholder="Enter OTP" maxlength="6" /><br><br>
     <button onclick="verifyOtp()">Verify</button>
-    <p style="font-size: 13px;">Check your GNDEC webmail for OTP. It may take few minutes to recieve OTP</p>
+    
     <div class="message" id="message"></div>
   </div>
 

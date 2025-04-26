@@ -325,4 +325,49 @@ h2, h6 {
 
 
 
+/* Footer */
+.footer a:hover {
+  color: #f4c15d !important;
+  text-decoration: none;
+}
 
+.footer ul li {
+  margin-bottom: 8px;
+}
+
+.footer ul li a {
+  transition: all 0.3s ease-in-out;
+}
+
+.footer .partners span {
+  font-size: 13px;
+}
+
+.footer .partners a {
+  font-weight: 600;
+}
+
+.footer .copyright {
+  font-size: 13px;
+}
+
+
+
+
+
+
+.footer a {
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #f4c15d !important;
+}
+
+.footer ul li {
+  margin-bottom: 8px;
+}
+
+.footer ul li a {
+  transition: all 0.3s ease-in-out;
+}
