@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRouter = require("./Routes/authRouter");
 const complaintRouter = require("./Routes/complaintRoutes");
 const queryRouter = require("./Routes/queryRouter");
+const userRouter = require("./Routes/userRouter");
 const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
 
@@ -18,6 +19,7 @@ app.use(cors());
 
 // Routes
 app.use("/auth", authRouter);
+app.use("/api/user", userRouter);
 app.use("/api/complaint", complaintRouter);
 app.use("/api/query", queryRouter);
 

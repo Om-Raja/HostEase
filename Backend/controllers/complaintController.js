@@ -35,7 +35,7 @@ const showMyComplaint = async (req, res) =>{
 
 const complaintSolved = async (req, res) => {
     try{
-        const {_id} = req.body.complaint;
+        const _id = req.params.id;
         if(!_id){
             return res.status(400).json({message: "Complaint ID (_id) is required to mark it as solved."});
         }
