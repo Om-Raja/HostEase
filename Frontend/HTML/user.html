@@ -233,15 +233,18 @@
  <!-- Complaint Form -->
 <div id="complaint" class="form-section">
     <h3>Complaint</h3>
-    <form id="complaintForm">
+    <form id="complaintForm" class="needs-validation" novalidate>
       <div class="row">
         <div class="mb-3 col-md-6">
           <label for="crn" class="form-label">Student CRN</label>
           <input type="text" class="form-control" id="crn" placeholder="Enter CRN" required>
+          <div class="invalid-feedback">Please fill CRN</div>
         </div>
         <div class="mb-3 col-md-6">
           <label for="name" class="form-label">Name</label>
           <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+          <div class="valid-feedback">Nice Name bro</div>
+          <div class="invalid-feedback">Please fill your good name</div>
         </div>
       </div>
   
@@ -316,7 +319,26 @@
             }, 3000);
         }
     });
+
+  (function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+
+
   </script>
+  
 
   <style>
     .toast {

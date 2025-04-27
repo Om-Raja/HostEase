@@ -59,6 +59,7 @@ function showSection(sectionId) {
       const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
       modal.show();
       this.reset(); // Optional: clear the form
+      window.location.reload();
     } else {
       this.reportValidity(); // Show built-in HTML validation
     }
