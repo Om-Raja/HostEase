@@ -65,7 +65,9 @@ const loginController = async function (req, res) {
         return res.status(200).json({
           message: "Login successful",
           success: true,
-          token
+          token,
+          email: user.email,
+          name: user.name,
         });
       }
       res.status(401).json({
