@@ -28,11 +28,32 @@ const showMyComplaint = async (req, res) =>{
         }
         res.status(200).json({ allComplaints });
     }catch(err){
-        console.error("Error fetching complaints: ", error);
+        console.error("Error fetching complaints: ", err);
         res.status(500).json({message: "Internal server error"});
+    }
+}
+
+const complaintSolved = async (req, res) => {
+    try{
+        const {_id} = req.body.complaint;
+        if(!_id){
+            return res.status(400).json({message: "Complaint ID (_id) is required to mark it as solved."});
+        }
+
+        const theComplaint = await ComplaintModel.findByIdAndUpdate(_id, {isSolved: true}, {new: true});
+
+        if(!theComplaint){
+            return res.status(404).json({ message: "Complaint not found"});
+        }
+
+        return res.status(200).json({ message: "Complaint is marked as SOLVED!", complaint: theComplaint });
+
+    }catch(err){
+        console.error("Error in updating the solved status of complaint. Error: ", err );
+        return res.status(500).json({message: "Internal server error"});
     }
 }
 
 
 
-module.exports = {registerComplaint, showMyComplaint};
+module.exports = {registerComplaint, showMyComplaint, complaintSolved};

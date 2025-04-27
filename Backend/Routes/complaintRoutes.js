@@ -1,9 +1,10 @@
 const router = require("express").Router();
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { registerComplaint, showMyComplaint } = require("../controllers/complaintController");
+const { registerComplaint, showMyComplaint, complaintSolved } = require("../controllers/complaintController");
 const complaintValidation = require("../middlewares/complaintValidation");
 
-router.post("/register", isLoggedIn, complaintValidation, registerComplaint);
-router.get("/seeComplaints", isLoggedIn, showMyComplaint);
+router.post("/", isLoggedIn, complaintValidation, registerComplaint);
+router.get("/", isLoggedIn, showMyComplaint);
+router.patch("/", isLoggedIn, complaintSolved);
 
 module.exports = router;

@@ -4,23 +4,30 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const authRouter = require("./Routes/authRouter");
-const productRouter = require("./Routes/product");
 const complaintRouter = require("./Routes/complaintRoutes");
 const queryRouter = require("./Routes/queryRouter");
+const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
 
 const PORT = process.env.PORT || 8080;
 
-app.get("/ping", (req, res)=>{
-    res.send("POnG");
-})
-
+// Middlewares
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
+
+// Routes
 app.use("/auth", authRouter);
 app.use("/api/complaint", complaintRouter);
 app.use("/api/query", queryRouter);
+
+// Handle undefined routes
+app.use((req, res, next)=>{
+    return res.status(404).json({message: "Route not found"});
+});
+
+// Globar error handler
+app.use(globalCatch);
 
 
 app.listen(PORT, ()=>{

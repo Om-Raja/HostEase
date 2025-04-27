@@ -17,4 +17,20 @@ const addQuery = async (req, res)=>{
     }
 }
 
-module.exports = { addQuery };
+const getQuery = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const queries = await Query.find({ user: userId });
+        if (!queries || queries.length === 0) {
+            return res.status(404).json({ message: "No queries found for your account." });
+        }
+
+        res.status(200).json(queries); 
+    } catch (err) {
+        console.error(`Error in fetching queries for user ${req.user.email}:`, err);
+        res.status(500).json({ message: "An error occurred while fetching your queries." });
+    }
+};
+
+module.exports = { addQuery, getQuery };
