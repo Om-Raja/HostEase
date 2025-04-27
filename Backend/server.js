@@ -7,6 +7,7 @@ const authRouter = require("./Routes/authRouter");
 const complaintRouter = require("./Routes/complaintRoutes");
 const queryRouter = require("./Routes/queryRouter");
 const userRouter = require("./Routes/userRouter");
+const studentRouter = require("./Routes/admin-routes/studentDetailRouter");
 const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
 
@@ -22,6 +23,7 @@ app.use("/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/complaint", complaintRouter);
 app.use("/api/query", queryRouter);
+app.use("/api/admin/student", studentRouter);
 
 // Handle undefined routes
 app.use((req, res, next)=>{
