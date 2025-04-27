@@ -65,10 +65,7 @@ const loginController = async function (req, res) {
         return res.status(200).json({
           message: "Login successful",
           success: true,
-          token,
-          email,
-          name: user.name,
-          role: user.role, // Include role in the response
+          token
         });
       }
       res.status(401).json({
@@ -81,8 +78,13 @@ const loginController = async function (req, res) {
   }
 };
 
-const logOutController = function (req, res) {
-  //logout
+const logOutController = (req, res) => {
+  try {
+    res.status(200).json({ message: "Logged out successfully." });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 };
 
-module.exports = { signUpController, loginController };
+module.exports = { signUpController, loginController, logOutController };
