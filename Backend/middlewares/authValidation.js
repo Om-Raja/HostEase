@@ -11,7 +11,7 @@ const signUpValidation = (req, res, next) => {
           "Email must be a valid GNDEC email (e.g., ram1234567@gndec.ac.in).",
       }),
     role: Joi.string()
-      .valid("student", "admin", "principal")
+      .valid("student", "admin")
       .default("student"),
     password: Joi.string()
       .pattern(
