@@ -22,14 +22,15 @@ const userSchema = new Schema({
     },
     crn: String,
     urn: String,
-    room: String,
+    room: Number,
     branch: String,
     batch: String,
     mobile: String,
-    FatherName: String,
-    MotherNmae: String,
-    Address: String,
-    HostelNo: {
+    fatherName: String,
+    motherName: String,
+    address: String,
+    fatherPhoneNo: String,
+    hostelNo: {
         type: Number,
         enum:[1, 2, 3, 4],
     }

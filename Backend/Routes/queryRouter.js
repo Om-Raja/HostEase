@@ -4,7 +4,8 @@ const router = express.Router();
 const queryValidation = require("../middlewares/queryValidation");
 const { addQuery, getQuery } = require("../controllers/queryControllers");
 
-router.post("/", isLoggedIn, queryValidation, addQuery);
-router.get("/", isLoggedIn, getQuery);
+router.route("/")
+.post(isLoggedIn, queryValidation, addQuery)
+.get(isLoggedIn, getQuery);
 
 module.exports = router;
