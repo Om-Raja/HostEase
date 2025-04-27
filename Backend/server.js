@@ -11,6 +11,7 @@ const studentRouter = require("./Routes/admin-routes/studentDetailRouter");
 const adminComplaintRouter = require("./Routes/admin-routes/adminComplaintRouter");
 const adminQueryRouter = require("./Routes/admin-routes/adminQueryRouter");
 const leaveRouter = require("./Routes/leaveRoutes");
+const adminLeaveRouter = require("./Routes/admin-routes/adminLeaveRoutes");
 const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
 
@@ -30,6 +31,7 @@ app.use("/api/admin/student", studentRouter);
 app.use("/api/admin/complaint", adminComplaintRouter );
 app.use("/api/admin/query", adminQueryRouter );
 app.use("/api/leave", leaveRouter);
+app.use("/api/admin/leave", adminLeaveRouter);
 
 // Handle undefined routes
 app.use((req, res, next)=>{
