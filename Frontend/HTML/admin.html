@@ -1,29 +1,579 @@
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const toastMessage = localStorage.getItem('toastMessage');
-        if (toastMessage) {
-            const toastContainer = document.createElement('div');
-            toastContainer.innerHTML = `
-                <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                    <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                ${toastMessage}
-                            </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Caretaker Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="../CSS/admin.css">
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar d-flex flex-column">
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+      <span class="fw-bold"> Caretaker Dashboard</span>
+      <img src="../images/profile user icon.png" id="profileIcon" class="rounded-circle" width="40" height="40"
+        style="cursor:pointer;" />
+    </div>
+
+    <a href="#" onclick="showSection('student')">Student Details</a>
+    <a href="#" onclick="showSection('attendence')">Student attendence</a>
+    <a href="#" onclick="showSection('query')">Student Query</a>
+    <a href="#" onclick="showSection('leave')">Student Leave Request</a>
+    <a href="#" onclick="showSection('complaint')">student Complaint</a>
+
+    <div class="logout mt-auto">
+      <a href="index.html" class="text-danger text-center">Logout</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Student Details Section -->
+    <div id="student" class="container mt-5" style="display: none;">
+      <h3 style="text-align: center;">Student Details</h3>
+      <!-- Search Bar -->
+      <div class="mb-3 text-end">
+        <input type="text" id="searchInput" class="form-control w-25" placeholder="Search by name...">
+      </div>
+      <!-- Student Details Table -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-success">
+            <tr>
+              <th>Room No</th>
+              <th>Name</th>
+              <th>Year</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <tr>
+              <td>101</td>
+              <td>John Doe</td>
+              <td>3</td>
+              <td><button class="btn btn-sm btn-primary details-btn" data-bs-toggle="modal"
+                  data-bs-target="#studentDetailsModal" data-index="0">Details</button></td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td>Jane Smith</td>
+              <td>2</td>
+              <td><button class="btn btn-sm btn-primary details-btn" data-bs-toggle="modal"
+                  data-bs-target="#studentDetailsModal" data-index="1">Details</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div class="modal fade" id="studentDetailsModal" tabindex="-1" aria-labelledby="studentDetailsModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-primary">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="studentDetailsModalLabel">Student Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="studentDetailsContent">
+              <p><strong>Name:</strong> <span id="studentName"></span></p>
+              <p><strong>CRN:</strong> <span id="studentCRN"></span></p>
+              <p><strong>URN:</strong> <span id="studentURN"></span></p>
+              <p><strong>Room No:</strong> <span id="studentRoomNo"></span></p>
+              <p><strong>Branch:</strong> <span id="studentBranch"></span></p>
+              <p><strong>Year:</strong> <span id="studentYear"></span></p>
+              <p><strong>Email:</strong> <span id="studentEmail"></span></p>
+              <p><strong>Mobile:</strong> <span id="studentMobile"></span></p>
+              <p><strong>Father's Name:</strong> <span id="fatherName"></span></p>
+              <p><strong>Mother's Name:</strong> <span id="motherName"></span></p>
+              <p><strong>Father's Mobile:</strong> <span id="fatherMobile"></span></p>
+              <p><strong>Address:</strong> <span id="studentAddress"></span></p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="window.print();">Print</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Section -->
+    <div id="attendence" class="container my-4" style="display: none;">
+      <h2 class="mb-4 text-center">Student Attendance</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered text-center">
+          <thead class="table-success">
+            <tr>
+              <th>Room No</th>
+              <th>Name</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Update</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>101</td>
+              <td>Karan</td>
+              <td><input type="date" class="form-control" id="date-1"></td>
+              <td>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status-1" value="Present">
+                  <label class="form-check-label">Present</label>
                 </div>
-            `;
-            document.body.appendChild(toastContainer);
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status-1" value="Absent">
+                  <label class="form-check-label">Absent</label>
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-primary" onclick="updateStatus(1)">Submit</button>
+              </td>
+            </tr>
+            <tr>
+              <td>102</td>
+              <td>Priya</td>
+              <td><input type="date" class="form-control" id="date-2"></td>
+              <td>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status-2" value="Present">
+                  <label class="form-check-label">Present</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="status-2" value="Absent">
+                  <label class="form-check-label">Absent</label>
+                </div>
+              </td>
+              <td>
+                <button class="btn btn-primary" onclick="updateStatus(2)">Submit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-            setTimeout(() => {
-                toastContainer.remove();
-                localStorage.removeItem('toastMessage');
-            }, 3000);
-        }
+    <!-- Query Section -->
+    <div id="query" class="container mt-5" style="display: none;">
+      <h3 style="text-align: center;">Student Queries</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-success">
+            <tr>
+              <th>CRN</th>
+              <th>Name</th>
+              <th>Room No</th>
+              <th>Query</th>
+              <th>Reply</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queryTableBody">
+            <tr>
+              <td>2201234</td>
+              <td>John Doe</td>
+              <td>101</td>
+              <td>WiFi not working</td>
+              <td class="reply-column"></td>
+              <td><button class="btn btn-sm btn-primary respond-btn" data-bs-toggle="modal"
+                  data-bs-target="#responseModal">Respond</button></td>
+            </tr>
+            <tr>
+              <td>2205678</td>
+              <td>Jane Smith</td>
+              <td>102</td>
+              <td>Water leakage</td>
+              <td class="reply-column"></td>
+              <td><button class="btn btn-sm btn-primary respond-btn" data-bs-toggle="modal"
+                  data-bs-target="#responseModal">Respond</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Response Modal for Queries -->
+    <div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-primary">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="responseModalLabel">Respond to Query</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="responseForm">
+              <div class="mb-3">
+                <label for="responseText" class="form-label">Response</label>
+                <textarea class="form-control" id="responseText" rows="3" placeholder="Enter your response..."
+                  required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit Response</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leave Section -->
+    <div id="leave" class="container mt-5" style="display: none;">
+      <h3 style="text-align: center;">Student Leave Requests</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-success">
+            <tr>
+              <th>CRN</th>
+              <th>Name</th>
+              <th>Room No</th>
+              <th>Reason</th>
+              <th>From Date</th>
+              <th>To Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="leaveTableBody">
+            <tr>
+              <td>2201234</td>
+              <td>John Doe</td>
+              <td>101</td>
+              <td>Family Function</td>
+              <td>2025-04-27</td>
+              <td>2025-04-30</td>
+              <td>
+                <button class="btn btn-sm btn-success approve-btn">Approve</button>
+                <button class="btn btn-sm btn-danger reject-btn">Reject</button>
+              </td>
+            </tr>
+            <tr>
+              <td>2205678</td>
+              <td>Jane Smith</td>
+              <td>102</td>
+              <td>Medical Emergency</td>
+              <td>2025-05-01</td>
+              <td>2025-05-03</td>
+              <td>
+                <button class="btn btn-sm btn-success approve-btn">Approve</button>
+                <button class="btn btn-sm btn-danger reject-btn">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Complaint Section -->
+    <div id="complaint" class="container mt-5" style="display: none;">
+      <h3 style="text-align: center;">Student Complaints</h3>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-success">
+            <tr>
+              <th>CRN</th>
+              <th>Name</th>
+              <th>Room No</th>
+              <th>Complaint</th>
+              <th>Status</th>
+              <th>Response</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="complaintTableBody">
+            <tr>
+              <td>2201234</td>
+              <td>John Doe</td>
+              <td>101</td>
+              <td>Fan not working</td>
+              <td><span class="badge bg-warning">Pending</span></td>
+              <td>--</td>
+              <td>
+                <button class="btn btn-sm btn-primary respond-btn" data-bs-toggle="modal" data-bs-target="#respondModal"
+                  data-row-index="0">Respond</button>
+              </td>
+            </tr>
+            <tr>
+              <td>2205678</td>
+              <td>Jane Smith</td>
+              <td>102</td>
+              <td>Bathroom Tap leaking</td>
+              <td><span class="badge bg-warning">Pending</span></td>
+              <td>--</td>
+              <td>
+                <button class="btn btn-sm btn-primary respond-btn" data-bs-toggle="modal" data-bs-target="#respondModal"
+                  data-row-index="1">Respond</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Respond Modal for Complaints -->
+    <div class="modal fade" id="respondModal" tabindex="-1" aria-labelledby="respondModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-primary">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="respondModalLabel">Respond to Complaint</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="respondForm">
+              <div class="mb-3">
+                <label for="responseText" class="form-label">Response</label>
+                <textarea class="form-control" id="responseText" rows="3" placeholder="Enter your response..."
+                  required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit Response</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Function to show the selected section and hide others
+    function showSection(sectionId) {
+      // Hide all sections first
+      document.querySelectorAll('.content > div').forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show the selected section
+      document.getElementById(sectionId).style.display = 'block';
+    }
+
+    // Initialize - show student section by default
+    document.addEventListener('DOMContentLoaded', function () {
+      showSection('student');
     });
-</script>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Student Details Data and Functions
+    const students = [
+      {
+        roomNo: '101',
+        name: 'John Doe',
+        year: '3',
+        crn: '2201234',
+        urn: '2203482',
+        branch: 'Computer Science',
+        email: 'john.doe@example.com',
+        mobile: '9876543210',
+        fatherName: 'Mr. Doe',
+        motherName: 'Mrs. Doe',
+        fatherMobile: '9123456789',
+        address: '1234 Elm Street, City, Country'
+      },
+      {
+        roomNo: '102',
+        name: 'Jane Smith',
+        year: '2',
+        crn: '2205678',
+        urn: '2204578',
+        branch: 'Electrical Engineering',
+        email: 'jane.smith@example.com',
+        mobile: '9876543221',
+        fatherName: 'Mr. Smith',
+        motherName: 'Mrs. Smith',
+        fatherMobile: '9123456781',
+        address: '5678 Oak Avenue, City, Country'
+      }
+    ];
+
+    // Populate student table dynamically
+    const studentTableBody = document.getElementById('studentTableBody');
+    students.forEach((student, index) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${student.roomNo}</td>
+        <td>${student.name}</td>
+        <td>${student.year}</td>
+        <td><button class="btn btn-sm btn-primary details-btn" data-bs-toggle="modal" data-bs-target="#studentDetailsModal" data-index="${index}">Details</button></td>
+      `;
+      studentTableBody.appendChild(row);
+    });
+
+    // Event listener for the "Details" button to populate the modal
+    document.querySelectorAll('.details-btn').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const index = event.target.getAttribute('data-index');
+        const student = students[index];
+
+        document.getElementById('studentName').innerText = student.name;
+        document.getElementById('studentCRN').innerText = student.crn;
+        document.getElementById('studentURN').innerText = student.urn;
+        document.getElementById('studentRoomNo').innerText = student.roomNo;
+        document.getElementById('studentBranch').innerText = student.branch;
+        document.getElementById('studentYear').innerText = student.year;
+        document.getElementById('studentEmail').innerText = student.email;
+        document.getElementById('studentMobile').innerText = student.mobile;
+        document.getElementById('fatherName').innerText = student.fatherName;
+        document.getElementById('motherName').innerText = student.motherName;
+        document.getElementById('fatherMobile').innerText = student.fatherMobile;
+        document.getElementById('studentAddress').innerText = student.address;
+      });
+    });
+
+    // Search functionality for student table
+    document.getElementById('searchInput').addEventListener('input', (event) => {
+      const searchValue = event.target.value.toLowerCase();
+      const filteredStudents = students.filter(student =>
+        student.name.toLowerCase().includes(searchValue)
+      );
+
+      studentTableBody.innerHTML = ''; // Clear existing rows
+
+      filteredStudents.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.roomNo}</td>
+          <td>${student.name}</td>
+          <td>${student.year}</td>
+          <td><button class="btn btn-sm btn-primary details-btn" data-bs-toggle="modal" data-bs-target="#studentDetailsModal" data-index="${index}">Details</button></td>
+        `;
+        studentTableBody.appendChild(row);
+      });
+    });
+
+    // Attendance Section Functions
+    window.onload = function () {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('date-1').value = today;
+      document.getElementById('date-2').value = today;
+    }
+
+    function updateStatus(rowNumber) {
+      const radios = document.getElementsByName('status-' + rowNumber);
+      let selectedStatus = '';
+      for (const radio of radios) {
+        if (radio.checked) {
+          selectedStatus = radio.value;
+          break;
+        }
+      }
+
+      const dateInput = document.getElementById('date-' + rowNumber).value;
+
+      if (selectedStatus === '' || dateInput === '') {
+        alert('Please select status and date.');
+        return;
+      }
+
+      const statusCell = radios[0].closest('td');
+      statusCell.innerHTML = `<strong>${selectedStatus}</strong> on <strong>${dateInput}</strong>`;
+
+      const button = statusCell.nextElementSibling.querySelector('button');
+      button.disabled = true;
+      button.classList.remove('btn-primary');
+      button.classList.add('btn-success');
+      button.innerText = "Updated";
+    }
+
+    // Query Section Functions
+    let selectedRow = null;
+    document.querySelectorAll('.respond-btn').forEach(button => {
+      button.addEventListener('click', function (event) {
+        selectedRow = event.target.closest('tr');
+      });
+    });
+
+    document.getElementById('responseForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const response = document.getElementById('responseText').value;
+      const replyCell = selectedRow.querySelector('.reply-column');
+      replyCell.textContent = response;
+      const actionButton = selectedRow.querySelector('.respond-btn');
+      actionButton.textContent = 'Responded';
+      actionButton.classList.remove('btn-primary');
+      actionButton.classList.add('btn-success');
+      actionButton.disabled = true;
+      const responseModal = bootstrap.Modal.getInstance(document.getElementById('responseModal'));
+      responseModal.hide();
+      document.getElementById('responseForm').reset();
+    });
+
+    // Leave Section Functions
+    document.querySelectorAll('.approve-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const td = this.parentElement;
+        td.innerHTML = '<span class="badge bg-success">Approved</span>';
+      });
+    });
+
+    document.querySelectorAll('.reject-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const td = this.parentElement;
+        td.innerHTML = '<span class="badge bg-danger">Rejected</span>';
+      });
+    });
+
+    // Complaint Section Functions
+    let selectedRowIndex = null;
+    document.querySelectorAll('.respond-btn').forEach((button, index) => {
+      button.addEventListener('click', function () {
+        selectedRowIndex = this.getAttribute('data-row-index');
+      });
+    });
+
+    document.getElementById('respondForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const response = document.getElementById('responseText').value;
+      const table = document.getElementById('complaintTableBody');
+      const row = table.rows[selectedRowIndex];
+      row.cells[4].innerHTML = '<span class="badge bg-success">Responded</span>';
+      row.cells[5].innerText = response;
+      const respondModal = bootstrap.Modal.getInstance(document.getElementById('respondModal'));
+      respondModal.hide();
+      document.getElementById('respondForm').reset();
+    });
+
+    // Toast notification
+    document.addEventListener('DOMContentLoaded', () => {
+      const toastMessage = localStorage.getItem('toastMessage');
+      if (toastMessage) {
+        const toastContainer = document.createElement('div');
+        toastContainer.innerHTML = `
+          <div class="toast-container position-fixed bottom-0 end-0 p-3">
+              <div class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="d-flex">
+                      <div class="toast-body">
+                          ${toastMessage}
+                      </div>
+                      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+              </div>
+          </div>
+        `;
+        document.body.appendChild(toastContainer);
+        setTimeout(() => {
+          toastContainer.remove();
+          localStorage.removeItem('toastMessage');
+        }, 3000);
+      }
+    });
+  </script>
+
+  <style>
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+  </style>
+</body>
+
+</html>

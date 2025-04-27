@@ -40,7 +40,7 @@ const complaintSolved = async (req, res) => {
             return res.status(400).json({message: "Complaint ID (_id) is required to mark it as solved."});
         }
 
-        const theComplaint = await ComplaintModel.findByIdAndUpdate(_id, {isSolved: true}, {new: true});
+        const theComplaint = await ComplaintModel.findByIdAndUpdate(_id, {isSolved: true, status: "resolved"}, {new: true});
 
         if(!theComplaint){
             return res.status(404).json({ message: "Complaint not found"});

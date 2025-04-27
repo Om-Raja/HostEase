@@ -2,9 +2,11 @@ const Joi = require("joi");
 
 const complaintValidation = (req, res, next) => {
     const complaintSchema = Joi.object({
-        complaintText: Joi.string().min(10).required().messages({
-            "string.min": "Description of complaint should be at least 10 characters long",
-            "any.required": "Complaint description is required",
+        complaint:Joi.object({
+            complaintText: Joi.string().min(10).required().messages({
+                "string.min": "Description of complaint should be at least 10 characters long",
+                "any.required": "Complaint description is required",
+            }),
         }),
     });
 
