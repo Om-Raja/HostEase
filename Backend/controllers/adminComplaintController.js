@@ -19,4 +19,18 @@ const updateComplaint = async (req, res)=>{
     }
 }
 
-module.exports = {updateComplaint}
+const getAllComplaints = async (req, res) => {
+    try{
+        const allComplaints = await ComplaintModel.find({});
+        if(!allComplaints){
+            return res.status(404).json({message: "No complaints found"});
+        }
+        res.status(200).json({allComplaints});
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json({message: "Something went wrong"});
+    }
+}
+
+module.exports = {updateComplaint, getAllComplaints};
