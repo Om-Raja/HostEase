@@ -23,4 +23,18 @@ const updateQueryResponse = async (req, res)=>{
     }
 }
 
-module.exports = { updateQueryResponse };
+const getAllQueries = async (req, res)=>{
+    try{
+        const allQueries = await QueryModel.find({});
+        if(!allQueries || allQueries.length === 0){
+            return res.status(404).json({message: "No queries found at the moment"})
+        }
+        res.status(200).json({allQueries});
+
+    }catch(err){
+        console.error(err);
+        res.status(500).json("Something went wrong");
+    }
+}
+
+module.exports = { updateQueryResponse, getAllQueries };
