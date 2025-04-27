@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRouter = require("./Routes/authRouter");
 const productRouter = require("./Routes/product");
 const complaintRouter = require("./Routes/complaintRoutes");
+const queryRouter = require("./Routes/queryRouter");
 require("./models/db");
 
 const PORT = process.env.PORT || 8080;
@@ -18,8 +19,8 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 app.use("/auth", authRouter);
-app.use("/", productRouter);
-app.use("/complaint", complaintRouter);
+app.use("/api/complaint", complaintRouter);
+app.use("/api/query", queryRouter);
 
 
 app.listen(PORT, ()=>{
