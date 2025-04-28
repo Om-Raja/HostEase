@@ -1,15 +1,15 @@
 // Show/hide sections
 function showSection(sectionId) {
-    const sections = document.querySelectorAll('.form-section');
-    sections.forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-  }
-  
-  // Profile icon toggle
-  document.getElementById('profileIcon').addEventListener('click', () => {
-    showSection('profileSection');
-  });
-  
+  const sections = document.querySelectorAll('.form-section');
+  sections.forEach(sec => sec.style.display = 'none');
+  document.getElementById(sectionId).style.display = 'block';
+}
+
+// Profile icon toggle
+document.getElementById('profileIcon').addEventListener('click', () => {
+  showSection('profileSection');
+});
+
 
 
 

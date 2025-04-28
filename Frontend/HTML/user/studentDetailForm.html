@@ -152,31 +152,6 @@
         this.reportValidity();
       }
     });
-
-function logOut() {
-  fetch('http://localhost:3000/api/user/logout', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem("token")}`,
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => {
-      if (response.ok) {
-        // Clear the token and redirect to the login page
-        localStorage.removeItem("token");
-        window.location.href = "login.html";
-      } else {
-        return response.json().then(data => {
-          alert(`Error: ${data.message || 'Failed to log out'}`);
-        });
-      }
-    })
-    .catch(error => {
-      console.error('Error logging out:', error);
-      alert('An error occurred while logging out. Please try again.');
-    });
-}
   </script>
 </body>
 </html>

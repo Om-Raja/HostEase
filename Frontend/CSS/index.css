@@ -4,7 +4,7 @@
 .hero-section {
   position: relative;
   height: 100vh;
-  background-image: url('../images/Gndec\ main\ img.jpg'); /* Replace with your image file name */
+  background-image: url('../images/Gndec\ main\ img.jpg'); 
   background-size: cover;
   background-position: center;
   display: flex;
@@ -19,7 +19,7 @@
   left: 0;
   height: auto;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Opacity */
+  background-color: rgba(0, 0, 0, 0.5); 
   z-index: 1;
 }
 

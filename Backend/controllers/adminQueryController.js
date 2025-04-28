@@ -1,4 +1,4 @@
-const QueryModel = require("../../models/query");
+const QueryModel = require("../models/query");
 
 const updateQueryResponse = async (req, res)=>{
     try{

@@ -1,4 +1,4 @@
-const ComplaintModel = require("../../models/complaint");
+const ComplaintModel = require("../models/complaint");
 
 const updateComplaint = async (req, res)=>{
     try{
