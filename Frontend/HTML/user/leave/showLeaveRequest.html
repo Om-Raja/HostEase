@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Leave Requests</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .table-section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .table-section h3 {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="table-section">
+      <h3>My Leave Requests</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Reason</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="leaveRequestsTable">
+          <!-- Leave requests will be dynamically populated here -->
+        </tbody>
+      </table>
+      <a href="../userDashboard.html" class="btn btn-primary">Dashboard</a>
+      <a href="./addLeaveRequest.html" class="btn btn-primary">Add Leave Request</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Check if the token exists in localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Redirect to login.html if no token is found
+      window.location.href = "../../login.html";
+      return;
+    }
+
+    try {
+      // Fetch leave requests from the backend
+      const response = await fetch('http://localhost:3000/api/leave', {
+        method: 'GET',
+        headers: {
+          'Authorization': `${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const leaveRequests = data.allRequest;
+
+        // Populate the table with leave requests
+        const tableBody = document.getElementById('leaveRequestsTable');
+        if (leaveRequests.length > 0) {
+          leaveRequests.forEach((leave, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${index + 1}</td>
+              <td>${leave.reason}</td>
+              <td>${new Date(leave.from).toLocaleDateString()}</td>
+              <td>${new Date(leave.to).toLocaleDateString()}</td>
+              <td>${leave.status}</td>
+            `;
+            tableBody.appendChild(row);
+          });
+        } else {
+          tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No leave requests found.</td></tr>';
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message || 'Failed to fetch leave requests'}`);
+      }
+    } catch (error) {
+      console.error('Error fetching leave requests:', error);
+      alert('An error occurred while fetching leave requests. Please try again.');
+    }
+  });
+  </script>
+</body>
+</html>
