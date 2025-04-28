@@ -39,17 +39,16 @@ const updateLeaveRequest = async (req, res)=>{
 }
 
 const showMyLeaveRequest = async (req, res) => {
-    try{
-        const allRequest = Leave.find({user: req.user._id});
-        if(!allRequest || allRequest.length == 0){
-            return res.status(404).json({message: "You have not applied for any leave request"});
+    try {
+        const allRequest = await Leave.find({ user: req.user._id });
+        if (!allRequest || allRequest.length === 0) {
+            return res.status(404).json({ message: "You have not applied for any leave request" });
         }
-        res.status(200).json({allRequest});
-
-    }catch(err){
+        res.status(200).json({ allRequest });
+    } catch (err) {
         console.error("Error in finding leave request of user ", req.user.email, " Error: ", err);
-        res.status(500).json("Internal server error");
+        res.status(500).json({ message: "Internal server error" });
     }
-}
+};
 
 module.exports = {applyForLeave, updateLeaveRequest, showMyLeaveRequest};
