@@ -26,4 +26,17 @@ const updateLeaveRequestStatus = async (req, res) => {
     }
 };
 
-module.exports = { updateLeaveRequestStatus };
+const showAllLeaveRequest = async (req, res) => {
+    try {
+        const allRequests = await Leave.find({ role: "student" });;
+        if (!allRequests || allRequests.length === 0) {
+            return res.status(404).json({ message: "There are no Leave requests at the moment" });
+        }
+        res.status(200).json({ allRequests });
+    } catch (err) {
+        console.error("Error in fetching all leave requests. Error: ", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+module.exports = { updateLeaveRequestStatus, showAllLeaveRequest };
