@@ -2,583 +2,283 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../CSS/user.css">
-</head>
-
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
     body {
-        overflow-x: hidden;
+      overflow-x: hidden;
+      background-color: #f8f9fa;
     }
 
     .sidebar {
-        height: 100vh;
-        position: fixed;
-        width: 250px;
-        background-color: #343a40;
-        color: white;
-        padding-bottom: 50px;
+      height: 100vh;
+      position: fixed;
+      width: 250px;
+      background-color: #343a40;
+      color: white;
+      padding-bottom: 50px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .sidebar a {
-        color: white;
-        text-decoration: none;
-        padding: 12px 20px;
-        display: block;
-        font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      padding: 12px 20px;
+      display: block;
+      font-size: 16px;
+      border-left: 3px solid transparent;
+      transition: all 0.3s;
     }
 
-    .sidebar a:hover {
-        background-color: #495057;
+    .sidebar a:hover, .sidebar a.active {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-left: 3px solid #0d6efd;
+    }
+
+    .sidebar a i {
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
     }
 
     .logout {
-        position: absolute;
-        bottom: 20px;
-        width: 100%;
+      position: absolute;
+      bottom: 20px;
+      width: calc(100% - 40px);
+      margin: 0 20px;
     }
 
     .content {
-        margin-left: 250px;
-        padding: 30px;
+      margin-left: 250px;
+      padding: 30px;
+      min-height: 100vh;
     }
 
-    @media (max-width: 768px) {
-        .sidebar {
-            position: relative;
-            width: 100%;
-            height: auto;
-        }
-
-        .content {
-            margin-left: 0;
-        }
-    }
-
-    .form-section {
-        display: none;
-    }
-
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-    }
-
-    .disabled-link {
-        pointer-events: none;
-        opacity: 0.5;
-        cursor: not-allowed;
+    .profile-header {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      margin-bottom: 30px;
     }
 
     .profile-complete-banner {
-        background-color: #ffc107;
-        color: #000;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      border-left: 5px solid #ffc107;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
-    .profile-complete-banner button {
-        margin-left: 10px;
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .content {
+        margin-left: 0;
+        padding: 20px;
+      }
+      
+      .profile-complete-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
     }
-</style>
+  </style>
+</head>
 
 <body>
 
-    <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column">
-        <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
-            <span class="fw-bold">Student Dashboard</span>
-            <img src="../images/profile user icon.png" id="profileIcon" class="rounded-circle" width="40" height="40"
-                style="cursor:pointer;" />
-        </div>
-
-        <a href="#" id="profileLink" onclick="showSection('profileSection')">Student Profile</a>
-        <a href="#" id="queryLink" class="disabled-link" onclick="showSection('query')">Query</a>
-        <a href="#" id="leaveLink" class="disabled-link" onclick="showSection('leave')">Leave Request</a>
-        <a href="#" id="complaintLink" class="disabled-link" onclick="showSection('complaint')">Complaint</a>
-
-        <div class="logout mt-auto">
-            <a href="index.html" class="text-danger text-center">Logout</a>
-        </div>
+  <!-- Sidebar -->
+  <div class="sidebar d-flex flex-column">
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
+      <span class="fw-bold fs-5">Student Dashboard</span>
+      <img src="../images/profile user icon.png" id="profileIcon" class="rounded-circle" width="40" height="40"
+        style="cursor:pointer; object-fit: cover;" />
     </div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Profile Update Banner -->
-        <div id="profileBanner" class="profile-complete-banner">
-            <div>
-                <strong>Important:</strong> Please complete your profile first to access all features.
-            </div>
-            <button class="btn btn-dark btn-sm" onclick="showSection('profileSection')">Update Profile Now</button>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profileSection" class="form-section">
-            <h3>Student Profile</h3>
-            <form id="profileForm">
-
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" disabled>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" disabled>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <label for="crn" class="form-label">CRN</label>
-                        <input type="text" class="form-control" id="crn" required>
-                    </div>
-
-                    <div class="mb-3 col-md-4">
-                        <label for="urn" class="form-label">URN</label>
-                        <input type="text" class="form-control" id="urn" required>
-                    </div>
-
-                    <div class="mb-3 col-md-4">
-                        <label for="roomNo" class="form-label">Room No</label>
-                        <input type="text" class="form-control" id="roomNo" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <label for="batch" class="form-label">Batch</label>
-                        <input type="text" class="form-control" id="batch" required>
-                    </div>
-                    <div class="mb-3 col-md-4">
-                        <label for="branch" class="form-label">Branch</label>
-                        <input type="text" class="form-control" id="branch" required>
-                    </div>
-                    <div class="mb-3 col-md-4">
-                        <label for="mobile" class="form-label">Mobile</label>
-                        <input type="tel" class="form-control" id="mobile" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <label for="fatherName" class="form-label">Father Name</label>
-                        <input type="text" class="form-control" id="fatherName" required>
-                    </div>
-                    <div class="mb-3 col-md-4">
-                        <label for="motherName" class="form-label">Mother Name</label>
-                        <input type="text" class="form-control" id="motherName" required>
-                    </div>
-                    <div class="mb-3 col-md-4">
-                        <label for="fatherMobile" class="form-label">Father Mobile</label>
-                        <input type="tel" class="form-control" id="fatherMobile" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="mb-3 col-md-4">
-                        <label for="hostelNo" class="form-label">Hostel No.</label>
-                        <input type="text" class="form-control" id="hostelNo" required>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
-                    <textarea class="form-control" id="address" rows="2" required></textarea>
-                </div>
-
-                <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary" id="saveBtn">Save Profile</button>
-                    <button type="button" class="btn btn-secondary d-none" id="editBtn">Edit Profile</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Query Form -->
-        <div id="query" class="form-section">
-            <h3>Submit a Query</h3>
-            <form id="queryForm">
-                <div class="mb-3">
-                    <label for="queryText" class="form-label">Your Query</label>
-                    <textarea class="form-control" id="queryText" rows="3" placeholder="Write your query..."
-                        required></textarea>
-                </div>
-                <button type="submit" class="btn btn-success">Submit</button>
-            </form>
-        </div>
-
-        <!-- Query Modal for confirmation -->
-        <div class="modal fade" id="queryModal" tabindex="-1" aria-labelledby="queryModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-success">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="queryModalLabel">Query Submitted</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Your query has been successfully submitted!
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">OK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Leave Form -->
-        <div id="leave" class="form-section">
-            <h3>Leave Request</h3>
-            <form id="leaveForm">
-                <div class="mb-3">
-                    <label for="leaveReason" class="form-label">Reason for Leave</label>
-                    <textarea class="form-control" id="leaveReason" rows="3" placeholder="Enter your reason..."
-                        required></textarea>
-                </div>
-
-                <div class="row">
-                    <div class="mb-3 col-md-6">
-                        <label for="leaveFromDate" class="form-label">From Date</label>
-                        <input type="date" class="form-control" id="leaveFromDate" required>
-                    </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="leaveToDate" class="form-label">To Date</label>
-                        <input type="date" class="form-control" id="leaveToDate" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-warning">Submit</button>
-            </form>
-        </div>
-
-        <!-- Leave Confirmation Modal -->
-        <div class="modal fade" id="leaveModal" tabindex="-1" aria-labelledby="leaveModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content border-warning">
-                    <div class="modal-header bg-warning text-dark">
-                        <h5 class="modal-title" id="leaveModalLabel">Leave Request Submitted</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Your leave request has been successfully submitted!
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-warning" data-bs-dismiss="modal">OK</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Complaint Form -->
-        <div id="complaint" class="form-section">
-            <h3>Complaint</h3>
-            <form id="complaintForm" class="needs-validation" novalidate>
-                <div class="mb-3">
-                    <label for="complaintText" class="form-label">Your Complaint</label>
-                    <textarea class="form-control" id="complaintText" rows="4" placeholder="Describe your complaint..."
-                        required></textarea>
-                </div>
-                <button type="submit" class="btn btn-danger">Submit</button>
-            </form>
-        </div>
-
-        <!-- Modal for Complaint -->
-        <div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="complaintModalLabel">Complaint Submitted</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Your complaint has been successfully submitted!
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Complete Modal -->
-        <div class="modal fade" id="profileCompleteModal" tabindex="-1" aria-labelledby="profileCompleteModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="profileCompleteModalLabel">Profile Updated</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Your profile has been successfully updated! You can now access all features.
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="mt-3">
+      <a href="#" id="profileLink" class="active">
+        <i class="bi bi-person-fill"></i> Student Profile
+      </a>
+      <a href="#" id="queryLink">
+        <i class="bi bi-question-circle-fill"></i> Query
+      </a>
+      <a href="#" id="leaveLink">
+        <i class="bi bi-calendar-check-fill"></i> Leave Request
+      </a>
+      <a href="#" id="complaintLink">
+        <i class="bi bi-exclamation-triangle-fill"></i> Complaint
+      </a>
     </div>
 
-    <!-- Scripts -->
+    <div class="logout mt-auto">
+      <a href="index.html" class="btn btn-outline-light w-100" onclick="logOut()">
+        <i class="bi bi-box-arrow-left"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Profile Update Banner -->
+    <div class="profile-complete-banner">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-exclamation-circle-fill me-3 fs-4"></i>
+        <div>
+          <strong>Important:</strong> Please complete your profile to access all features of the dashboard.
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm">
+        <i class="bi bi-pencil-fill"></i> Update Profile Now
+      </button>
+    </div>
+
+    <!-- Welcome Header -->
+    <div class="profile-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="mb-1">Welcome back, <span class="text-primary">John Doe</span></h4>
+          <p class="text-muted mb-0">Student ID: STU2023001</p>
+        </div>
+        <div class="badge bg-success bg-opacity-10 text-success">
+          <i class="bi bi-check-circle-fill"></i> Active
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card bg-primary bg-opacity-10 border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Pending Requests</h6>
+                <h3 class="mb-0">2</h3>
+              </div>
+              <i class="bi bi-hourglass-split fs-1 text-primary opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-warning bg-opacity-10 border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Unresolved Queries</h6>
+                <h3 class="mb-0">1</h3>
+              </div>
+              <i class="bi bi-question-circle fs-1 text-warning opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-info bg-opacity-10 border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Approved Leaves</h6>
+                <h3 class="mb-0">5</h3>
+              </div>
+              <i class="bi bi-check2-all fs-1 text-info opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card bg-success bg-opacity-10 border-0 h-100">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="card-title text-muted">Profile Complete</h6>
+                <h3 class="mb-0">80%</h3>
+              </div>
+              <i class="bi bi-person-check fs-1 text-success opacity-25"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0">
+        <h5 class="mb-0">Recent Activity</h5>
+      </div>
+      <div class="card-body">
+        <div class="list-group list-group-flush">
+          <div class="list-group-item border-0 py-3">
+            <div class="d-flex align-items-center">
+              <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                <i class="bi bi-check-circle text-primary"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Leave Request Approved</h6>
+                <p class="mb-0 text-muted small">Your leave request for 15th May has been approved</p>
+              </div>
+              <div class="ms-auto text-muted small">2 hours ago</div>
+            </div>
+          </div>
+          <div class="list-group-item border-0 py-3">
+            <div class="d-flex align-items-center">
+              <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
+                <i class="bi bi-exclamation-triangle text-warning"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Query Response</h6>
+                <p class="mb-0 text-muted small">Admin responded to your query about exam schedule</p>
+              </div>
+              <div class="ms-auto text-muted small">1 day ago</div>
+            </div>
+          </div>
+          <div class="list-group-item border-0 py-3">
+            <div class="d-flex align-items-center">
+              <div class="bg-info bg-opacity-10 p-2 rounded me-3">
+                <i class="bi bi-info-circle text-info"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Profile Update</h6>
+                <p class="mb-0 text-muted small">You updated your contact information</p>
+              </div>
+              <div class="ms-auto text-muted small">3 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  //logout function
-  const logOut = () => {
-    localStorage.removeItem("token");
-  }
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Logout function
+    const logOut = () => {
+      localStorage.removeItem("token");
+    }
 
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      // Check if the user is authenticated
-      const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = "index.html"; // Redirect to login if not authenticated
-        return;
-      }
-  
-      // Check if profile is complete
-      await checkProfileCompletion();
-  
-      // Autofill name and email from localStorage
-      autofillNameEmail();
-  
-      // Initialize form validation
-      initFormValidation();
+    // Simple navigation active state
+    document.querySelectorAll('.sidebar a').forEach(link => {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
     });
-  
-    async function checkProfileCompletion() {
-      try {
-        const response = await fetch('http://localhost:3000/api/user', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem("token")}`
-          }
-        });
-  
-        if (response.ok) {
-          const data = await response.json();
-          if (data.userData.profileComplete) {
-            document.getElementById('profileBanner').style.display = 'none';
-            enableAllFeatures();
-          } else {
-            document.getElementById('profileBanner').style.display = 'flex';
-            showSection('profileSection');
-            disableOtherFeatures();
-          }
-        } else {
-          throw new Error('Failed to fetch profile completion status');
-        }
-      } catch (error) {
-        console.error("Error checking profile completion:", error);
-        document.getElementById('profileBanner').style.display = 'flex';
-        showSection('profileSection');
-        disableOtherFeatures();
-      }
-    }
-  
-    function enableAllFeatures() {
-      document.getElementById('queryLink').classList.remove('disabled-link');
-      document.getElementById('leaveLink').classList.remove('disabled-link');
-      document.getElementById('complaintLink').classList.remove('disabled-link');
-    }
-  
-    function disableOtherFeatures() {
-      document.getElementById('queryLink').classList.add('disabled-link');
-      document.getElementById('leaveLink').classList.add('disabled-link');
-      document.getElementById('complaintLink').classList.add('disabled-link');
-    }
-  
-    function showSection(sectionId) {
-      const sections = document.querySelectorAll('.form-section');
-      sections.forEach(sec => sec.style.display = 'none');
-      document.getElementById(sectionId).style.display = 'block';
-    }
-  
-    // Profile Form Submission
-    const profileForm = document.getElementById("profileForm");
-    profileForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-  
-      if (profileForm.checkValidity()) {
-        try {
-          const profileData = {
-            crn: document.getElementById('crn').value,
-            urn: document.getElementById('urn').value,
-            room: document.getElementById('roomNo').value,
-            batch: document.getElementById('batch').value,
-            branch: document.getElementById('branch').value,
-            mobile: document.getElementById('mobile').value,
-            fatherName: document.getElementById('fatherName').value,
-            motherName: document.getElementById('motherName').value,
-            fatherPhoneNo: document.getElementById('fatherMobile').value,
-            hostelNo: document.getElementById('hostelNo').value,
-            address: document.getElementById('address').value,
-
-          };
-  
-          const response = await fetch('http://localhost:3000/api/user', {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify(profileData)
-          });
-  
-          if (response.ok) {
-            const modal = new bootstrap.Modal(document.getElementById('profileCompleteModal'));
-            modal.show();
-            enableAllFeatures();
-            document.getElementById('profileBanner').style.display = 'none';
-          } else {
-            throw new Error('Failed to update profile');
-          }
-        } catch (error) {
-          console.error("Error updating profile:", error);
-          alert("An error occurred while updating your profile. Please try again.");
-        }
-      } else {
-        profileForm.reportValidity();
-      }
-    });
-  
-    // Query Form Submission
-    const queryForm = document.getElementById('queryForm');
-    queryForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-  
-      if (queryForm.checkValidity()) {
-        try {
-          const queryText = document.getElementById('queryText').value;
-  
-          const response = await fetch('http://localhost:3000/api/query', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({ query: queryText })
-          });
-  
-          if (response.ok) {
-            const modal = new bootstrap.Modal(document.getElementById('queryModal'));
-            modal.show();
-            queryForm.reset();
-          } else {
-            throw new Error('Failed to submit query');
-          }
-        } catch (error) {
-          console.error("Error submitting query:", error);
-          alert("An error occurred while submitting your query. Please try again.");
-        }
-      } else {
-        queryForm.reportValidity();
-      }
-    });
-  
-    // Leave Form Submission
-    const leaveForm = document.getElementById('leaveForm');
-    leaveForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-  
-      if (leaveForm.checkValidity()) {
-        try {
-          const leaveData = {
-            reason: document.getElementById('leaveReason').value,
-            fromDate: document.getElementById('leaveFromDate').value,
-            toDate: document.getElementById('leaveToDate').value
-          };
-  
-          const response = await fetch('http://localhost:3000/api/leave', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify(leaveData)
-          });
-  
-          if (response.ok) {
-            const modal = new bootstrap.Modal(document.getElementById('leaveModal'));
-            modal.show();
-            leaveForm.reset();
-          } else {
-            throw new Error('Failed to submit leave request');
-          }
-        } catch (error) {
-          console.error("Error submitting leave request:", error);
-          alert("An error occurred while submitting your leave request. Please try again.");
-        }
-      } else {
-        leaveForm.reportValidity();
-      }
-    });
-  
-    // Complaint Form Submission
-    const complaintForm = document.getElementById('complaintForm');
-    complaintForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-  
-      if (complaintForm.checkValidity()) {
-        try {
-          const complaintText = document.getElementById('complaintText').value;
-  
-          const response = await fetch('http://localhost:3000/api/complaint', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem("token")}`
-            },
-            body: JSON.stringify({ complaint: complaintText })
-          });
-  
-          if (response.ok) {
-            const modal = new bootstrap.Modal(document.getElementById('complaintModal'));
-            modal.show();
-            complaintForm.reset();
-          } else {
-            throw new Error('Failed to submit complaint');
-          }
-        } catch (error) {
-          console.error("Error submitting complaint:", error);
-          alert("An error occurred while submitting your complaint. Please try again.");
-        }
-      } else {
-        complaintForm.reportValidity();
-      }
-    });
-  
-    function autofillNameEmail() {
-      const name = localStorage.getItem('name');
-      const email = localStorage.getItem('email');
-  
-      if (name && document.getElementById('name')) {
-        document.getElementById('name').value = name;
-        document.getElementById('name').disabled = true;
-      }
-      if (email && document.getElementById('email')) {
-        document.getElementById('email').value = email;
-        document.getElementById('email').disabled = true;
-      }
-    }
   </script>
 </body>
-
 </html>
