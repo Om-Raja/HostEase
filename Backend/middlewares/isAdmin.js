@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 
 const isAdmin = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
+    const token = req.headers["authorization"];
 
     if (!authHeader) {
         return res.status(401).json({ message: "Please log in first." });
     }
 
-    const token = authHeader.split(" ")[1];
+
 
     if (!token) {
         return res.status(401).json({ message: "Invalid token format. Please log in again." });
