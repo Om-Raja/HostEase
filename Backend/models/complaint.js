@@ -12,7 +12,7 @@ const complaintSchema = new Schema({
         required: true,
     },
     responseText:{
-        tyep: String,
+        type: String,
         default:"No response yet"
     },
     status: {
