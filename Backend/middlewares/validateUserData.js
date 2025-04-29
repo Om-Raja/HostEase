@@ -57,4 +57,25 @@ const validateUserData = (req, res, next) => {
     next();
 };
 
-module.exports = validateUserData;
+const  validateCareTakerData = (req, res, next) => {
+    const careTakerDataSchema = Joi.object({
+        mobile: Joi.string().length(10).required().messages({
+            "string.length": "Mobile number must be exactly 10 digits long.",
+            "any.required": "Mobile number is required.",
+        }),
+        hostelNo: Joi.number().valid(1, 2, 3, 4).required().messages({
+            "any.only": "Hostel number must be one of 1, 2, 3, or 4.",
+            "any.required": "Hostel number is required.",
+        }),
+    });
+
+    const { error } = careTakerDataSchema.validate(req.body);
+    if (error) {
+        console.error("CareTaker data validation failed:", error.details[0].message);
+        return res.status(400).json({ message: error.details[0].message });
+    }
+    next();
+};
+
+
+module.exports = {validateUserData, validateCareTakerData};
