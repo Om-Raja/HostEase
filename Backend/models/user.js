@@ -20,10 +20,25 @@ const userSchema = new Schema({
         required: true,
         default: "student",
     },
-    crn: String,
-    urn: String,
-    room: Number,
-    branch: String,
+    crn:{
+        type: String,
+        unique: true,
+        match: [/^\d{7}$/, "Roll number must be exactly 7 digits (numbers only)"]
+    },
+    urn:{
+        type: String,
+        unique: true,
+        match: [/^\d{7}$/, "Roll number must be exactly 7 digits (numbers only)"]
+    },
+    room: {
+        type: Number,
+        min: 1,
+        max: 999
+    },
+    branch: {
+        type: String,
+        enum: ["CSE", "ECE", "CE", "IT", "ME", "EE"],
+    },
     batch: String,
     mobile: String,
     fatherName: String,

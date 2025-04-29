@@ -2,7 +2,7 @@ const User = require("../models/user");
 
 const getAllStudentData = async (req, res) => {
   try {
-    const careTaker = await User.findById(req.user._id); // Added await
+    const careTaker = await User.findById(req.user._id);
     if (!careTaker) {
       return res
         .status(404)
