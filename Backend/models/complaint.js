@@ -11,7 +11,10 @@ const complaintSchema = new Schema({
         type: String,
         required: true,
     },
-    responseText: String,
+    responseText:{
+        tyep: String,
+        default:"No response yet"
+    },
     status: {
         type: String,
         enum: ["pending", "resolved", "rejected"],

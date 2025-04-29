@@ -11,7 +11,10 @@ const querySchema = new Schema({
         type: String,
         required: true,
     },
-    answer: String
+    answer: {
+        type: String,
+        default: "No answer yet"
+    }
 })
 
 const Query = mongoose.model("Query", querySchema);
