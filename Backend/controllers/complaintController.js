@@ -54,6 +54,23 @@ const complaintSolved = async (req, res) => {
     }
 }
 
+const deleteComplaint = async(req, res)=>{
+    try{
+        const complaintId = req.params.id;
+        if(!complaintId){
+            return res.status(400).json({message:"complaint Id is required to delete the complaint"});
+        }
+        const result = await ComplaintModel.findByIdAndDelete(complaintId);
+        if(!result) return res.status(404).json({message: "Invalid or missing complaint"});
+
+        res.status(200).json({message: "Complaint removed!"});
+
+    }catch(err){
+        console.error("Error in deleting a complaint with id ",req.params.id, "ERROR: ", err);
+        res.status(500).json({message: "We're encountring an error. Please try again later"});
+    }
+}
 
 
-module.exports = {registerComplaint, showMyComplaint, complaintSolved};
+
+module.exports = {registerComplaint, showMyComplaint, complaintSolved, deleteComplaint};

@@ -1,12 +1,15 @@
 const router = require("express").Router();
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const { registerComplaint, showMyComplaint, complaintSolved } = require("../controllers/complaintController");
+const { registerComplaint, showMyComplaint, complaintSolved, deleteComplaint } = require("../controllers/complaintController");
 const complaintValidation = require("../middlewares/complaintValidation");
 
 router.route("/")
 .post(isLoggedIn, complaintValidation, registerComplaint)
-.get(isLoggedIn, showMyComplaint);
+.get(isLoggedIn, showMyComplaint)
 
-router.patch("/:id", isLoggedIn, complaintSolved);
+
+router.route("/:id")
+.patch(isLoggedIn, complaintSolved)
+.delete(isLoggedIn, deleteComplaint);
 
 module.exports = router;
