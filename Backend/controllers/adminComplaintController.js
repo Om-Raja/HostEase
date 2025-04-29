@@ -1,4 +1,5 @@
 const ComplaintModel = require("../models/complaint");
+const User = require("../models/user");
 
 const updateComplaint = async (req, res)=>{
     try{
@@ -21,8 +22,21 @@ const updateComplaint = async (req, res)=>{
 
 const getAllComplaints = async (req, res) => {
     try{
-        const allComplaints = await ComplaintModel.find({});
-        if(!allComplaints){
+        const careTakerEmail = req.user.email;
+        if(!careTakerEmail) return res.status(400).json({message: "CareTaker email is missing"});
+
+        const careTaker = await User.findOne({email: careTakerEmail});
+        if(!careTaker) return res.status(404).json({message: "No careTaker found"});
+
+        const careTakerHostel = careTaker.hostelNo;
+
+        const allStudentOfSameHostel = await User.find({hostelNo: careTakerHostel}).select("_id");
+        if(!allStudentOfSameHostel || allStudentOfSameHostel.length === 0) return res.status(404).json({message: `There are no student in hostel no ${careTakerHostel}`});
+
+        const allUserIds = allStudentOfSameHostel.map((u)=>{return u._id});
+
+        const allComplaints = await ComplaintModel.find({user: {$in: allUserIds}}).populate("user", "name email branch crn room hostelNo mobile");
+        if(!allComplaints || allComplaints.length === 0){
             return res.status(404).json({message: "No complaints found"});
         }
         res.status(200).json({allComplaints});

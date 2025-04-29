@@ -32,7 +32,7 @@ const userSchema = new Schema({
     fatherPhoneNo: String,
     hostelNo: {
         type: Number,
-        enum:[1, 2, 3, 4],
+        enum:[1, 2, 3, 4, 5],
     }
 })
 

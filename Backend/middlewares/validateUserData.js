@@ -43,8 +43,8 @@ const validateUserData = (req, res, next) => {
             "string.length": "Father's phone number must be exactly 10 digits long.",
             "any.required": "Father's phone number is required.",
         }),
-        hostelNo: Joi.number().valid(1, 2, 3, 4).required().messages({
-            "any.only": "Hostel number must be one of 1, 2, 3, or 4.",
+        hostelNo: Joi.number().valid(1, 2, 3, 4, 5).required().messages({
+            "any.only": "Hostel number must be one of 1, 2, 3, 4 or 5.",
             "any.required": "Hostel number is required.",
         }),
     });
@@ -63,8 +63,8 @@ const  validateCareTakerData = (req, res, next) => {
             "string.length": "Mobile number must be exactly 10 digits long.",
             "any.required": "Mobile number is required.",
         }),
-        hostelNo: Joi.number().valid(1, 2, 3, 4).required().messages({
-            "any.only": "Hostel number must be one of 1, 2, 3, or 4.",
+        hostelNo: Joi.number().valid(1, 2, 3, 4, 5).required().messages({
+            "any.only": "Hostel number must be one of 1, 2, 3, 4 or 5.",
             "any.required": "Hostel number is required.",
         }),
     });
