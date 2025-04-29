@@ -15,6 +15,11 @@ const noticeSchema = new Schema({
         required:true,
         minlength: 10,
     },
+    hostelNo:{
+        type: Number,
+        enum: [1, 2, 3, 4, 5],
+        required: true,
+    }, 
     createdAt:{
         type: Date,
         default: Date.now,

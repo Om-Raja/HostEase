@@ -4,6 +4,7 @@ const validateNotice = (req, res, next) => {
     const noticeSchema = Joi.object({
         title: Joi.string().min(5).required(),
         description: Joi.string().min(10).required(),
+        hostelNo: Joi.number().required().valid(1, 2, 3, 4, 5).messages({"any.only": "Hostel no can only be from 1, 2, 3, 4 or 5"}),
         expiresAt: Joi.date().iso().greater('now').required()
             .messages({
                 'date.base': 'Expiry date must be a valid date',
