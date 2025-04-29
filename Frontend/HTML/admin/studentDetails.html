@@ -1,11 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      margin-top: 50px;
+      /* padding: 10px; */
+    }
+    .table-responsive {
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      border-radius: 5px;
+      padding: 8px 15px 8px 15px;
+    }
+    .table thead {
+      background-color: #007bff;
+      color: white;
+    }
+    .btn-details {
+      background-color: #17a2b8;
+      color: white;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .modal-content, .modal-content * {
+        visibility: visible;
+      }
+      .modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <p>student details</p>
+  <div class="container">
+    <h3 class="mb-4">Student Details</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Room No</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Student rows will be dynamically populated here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Student Details Modal -->
+  <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="studentModalLabel">Student Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalBodyContent">
+          <!-- Student details will be populated here -->
+        </div>
+        <div class="modal-footer no-print">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.print()">Print Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "../../login.html";
+        return;
+      }
+
+      const studentTableBody = document.getElementById('studentTableBody');
+      const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
+
+      // Fetch student details
+      async function fetchStudentDetails() {
+        try {
+          const response = await fetch('http://localhost:3000/api/admin/student', {
+            method: 'GET',
+            headers: {
+              'Authorization': `${token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const students = data.students;
+
+            if (students.length > 0) {
+              studentTableBody.innerHTML = '';
+              students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${student.room || 'N/A'}</td>
+                  <td>${student.name || 'N/A'}</td>
+                  <td>${student.mobile || 'N/A'}</td>
+                  <td>
+                    <button class="btn btn-sm btn-details" onclick="showStudentDetails(${JSON.stringify(student).replace(/"/g, '&quot;')})">
+                      View Details
+                    </button>
+                  </td>
+                `;
+                studentTableBody.appendChild(row);
+              });
+            } else {
+              studentTableBody.innerHTML = '<tr><td colspan="4" class="text-center">No students found.</td></tr>';
+            }
+          } else {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.message || 'Failed to fetch student details'}`);
+          }
+        } catch (error) {
+          console.error('Error fetching student details:', error);
+          alert('An error occurred while fetching student details. Please try again.');
+        }
+      }
+
+      // Initial fetch
+      fetchStudentDetails();
+    });
+
+    function showStudentDetails(student) {
+      const modalTitle = document.getElementById('studentModalLabel');
+      const modalBody = document.getElementById('modalBodyContent');
+      
+      modalTitle.textContent = `Details of ${student.name || 'Student'}`;
+      
+      modalBody.innerHTML = `
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>CRN:</strong> ${student.crn || 'N/A'}</p>
+            <p><strong>URN:</strong> ${student.urn || 'N/A'}</p>
+            <p><strong>Room No:</strong> ${student.room || 'N/A'}</p>
+            <p><strong>Hostel No:</strong> ${student.hostelNo || 'N/A'}</p>
+            <p><strong>Branch:</strong> ${student.branch || 'N/A'}</p>
+            <p><strong>Batch:</strong> ${student.batch || 'N/A'}</p>
+          </div>
+          <div class="col-md-6">
+           
+            <p><strong>Mobile:</strong> ${student.mobile || 'N/A'}</p>
+             <p><strong>Email:</strong> ${student.email || 'N/A'}</p>
+             <p><strong>Mother's Name:</strong> ${student.motherName || 'N/A'}</p>
+             <p><strong>Father's Name:</strong> ${student.fatherName || 'N/A'}</p>
+             <p><strong>Father's Mobile:</strong> ${student.fatherPhoneNo || 'N/A'}</p>
+            
+          </div>
+        </div>
+        <div class="row ">
+          <div class="col-12">
+            <p><strong>Address:</strong> ${student.address || 'N/A'}</p>
+          </div>
+        </div>
+      `;
+      
+      const modal = new bootstrap.Modal(document.getElementById('studentModal'));
+      modal.show();
+    }
+  </script>
 </body>
 </html>
