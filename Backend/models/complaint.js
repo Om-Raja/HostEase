@@ -22,7 +22,8 @@ const complaintSchema = new Schema({
     },
     isSolved:{
         type: String,
-        default: false,
+        enum:["Satisfied", "Not Satisfied"],
+        default: "Not Satisfied",
     },
     createdAt: {
         type: Date,
