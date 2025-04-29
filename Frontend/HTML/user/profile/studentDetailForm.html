@@ -114,22 +114,35 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+      // Fetch user details on page load
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '../../login.html';
+        return;
+      }
+      await fetchUserDetails();
+    });
+
+
     document.getElementById('updateUserForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
       if (this.checkValidity()) {
         const profileData = {
-          crn: document.getElementById('crn').value,
-          urn: document.getElementById('urn').value,
-          room: document.getElementById('roomNo').value,
-          batch: document.getElementById('batch').value,
-          branch: document.getElementById('branch').value,
-          mobile: document.getElementById('mobile').value,
-          fatherName: document.getElementById('fatherName').value,
-          motherName: document.getElementById('motherName').value,
-          fatherPhoneNo: document.getElementById('fatherMobile').value,
-          hostelNo: document.getElementById('hostelNo').value,
-          address: document.getElementById('address').value,
+          crn: document.getElementById('crn').value.trim(),
+          urn: document.getElementById('urn').value.trim(),
+          room: document.getElementById('roomNo').value.trim(),
+          batch: document.getElementById('batch').value.trim(),
+          branch: document.getElementById('branch').value.trim().toUpperCase(),
+          mobile: document.getElementById('mobile').value.trim(),
+          fatherName: document.getElementById('fatherName').value.trim(),
+          motherName: document.getElementById('motherName').value.trim(),
+          fatherPhoneNo: document.getElementById('fatherMobile').value.trim(),
+          hostelNo: document.getElementById('hostelNo').value.trim(),
+          address: document.getElementById('address').value.trim(),
         };
 
         try {
@@ -137,7 +150,7 @@
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZhcnVuMjIyMTEyNkBnbmRlYy5hYy5pbiIsInJvbGUiOiJzdHVkZW50IiwiX2lkIjoiNjgwZGNhZWY5OThlMmM2NWQ4Y2JhOGZiIiwiaWF0IjoxNzQ1Nzg2MzUwLCJleHAiOjE3NDU4NzI3NTB9.r0EhPM3oW70nP--8dgktAUWiwAyAJUTL7EngV9gXTb0`
+              'Authorization': `${localStorage.getItem('token')}`
             },
             body: JSON.stringify(profileData)
           });

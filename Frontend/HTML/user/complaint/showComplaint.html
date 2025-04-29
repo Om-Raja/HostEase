@@ -51,6 +51,10 @@
             padding: 40px;
             color: #6c757d;
         }
+
+        .satisfaction-btn {
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 
@@ -61,8 +65,6 @@
             <a href="../complaint/registerComplaint.html" class="btn btn-danger">
                 <i class="bi bi-plus-circle"></i> New Complaint
             </a>
-            
-            
         </div>
 
         <div id="complaintsContainer">
@@ -79,7 +81,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const token = localStorage.getItem('token');
             if (!token) {
-                window.location.href = 'login.html';
+                window.location.href = '../../login.html';
                 return;
             }
 
@@ -139,9 +141,17 @@
 
                     const statusClass = complaint.status === 'resolved' ? 'status-resolved' : 'status-pending';
                     const statusText = complaint.status === 'resolved' ? 'Resolved' : 'Pending';
+                    
+                    // Determine button text and class based on current isSolved status
+                    const isSolved = complaint.isSolved === 'Satisfied';
+                    const buttonText = isSolved ? 'Satisfied ✓' : 'Mark as Satisfied';
+                    const buttonClass = isSolved ? 'btn-success disabled' : 'btn-outline-success';
+
+                    // Check if there's a valid admin response
+                    const hasAdminResponse = complaint.responseText && complaint.responseText !== "No response yet";
 
                     complaintsContainer.innerHTML += `
-                        <div class="card mb-3 complaint-card">
+                        <div class="card mb-3 complaint-card" id="complaint-${complaint._id}">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <span class="badge ${statusClass} status-badge">${statusText}</span>
@@ -154,12 +164,83 @@
                                         <p>${complaint.responseText}</p>
                                     </div>
                                 ` : ''}
+                                ${(complaint.status === 'resolved' && hasAdminResponse) ? `
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button class="btn btn-sm ${buttonClass} satisfaction-btn" 
+                                                data-id="${complaint._id}" 
+                                                ${isSolved ? 'disabled' : ''}>
+                                            ${buttonText}
+                                        </button>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     `;
                 });
+
+                // Add event listeners to all satisfaction buttons
+                document.querySelectorAll('.satisfaction-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const complaintId = this.getAttribute('data-id');
+                        updateSatisfactionStatus(complaintId, this);
+                    });
+                });
             }
 
+            function updateSatisfactionStatus(complaintId, buttonElement) {
+                // Show loading state on button
+                buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+                buttonElement.disabled = true;
+                
+                fetch(`http://localhost:3000/api/complaint/${complaintId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isSolved: 'Satisfied' })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update satisfaction status');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update the button appearance
+                    buttonElement.classList.remove('btn-outline-success');
+                    buttonElement.classList.add('btn-success');
+                    buttonElement.innerHTML = 'Satisfied ✓';
+                    buttonElement.disabled = true;
+                    
+                    // Show success message
+                    const complaintCard = document.getElementById(`complaint-${complaintId}`);
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success mt-2 mb-0';
+                    alertDiv.innerHTML = '<i class="bi bi-check-circle-fill"></i> Thank you for your feedback!';
+                    buttonElement.parentNode.insertBefore(alertDiv, buttonElement.nextSibling);
+                    
+                    // Remove the alert after 3 seconds
+                    setTimeout(() => {
+                        alertDiv.remove();
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error updating satisfaction status:', error);
+                    buttonElement.innerHTML = 'Mark as Satisfied';
+                    buttonElement.disabled = false;
+                    
+                    // Show error message
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger mt-2 mb-0';
+                    alertDiv.textContent = 'Failed to update. Please try again.';
+                    buttonElement.parentNode.insertBefore(alertDiv, buttonElement.nextSibling);
+                    
+                    setTimeout(() => {
+                        alertDiv.remove();
+                    }, 3000);
+                });
+            }
 
             function showEmptyState() {
                 complaintsContainer.innerHTML = `
@@ -167,7 +248,7 @@
                         <i class="bi bi-emoji-frown" style="font-size: 3rem;"></i>
                         <h3 class="mt-3">No complaints found</h3>
                         <p>You haven't submitted any complaints yet.</p>
-                        <a href="complaint.html" class="btn btn-danger">
+                        <a href="../complaint/registerComplaint.html" class="btn btn-danger">
                             <i class="bi bi-plus-circle"></i> Submit New Complaint
                         </a>
                     </div>
@@ -176,5 +257,4 @@
         });
     </script>
 </body>
-
 </html>

@@ -53,7 +53,7 @@
                   console.log(result.email);
                     if (result.role === 'admin') {
                         localStorage.setItem('toastMessage', 'Login successful!');
-                        window.location.href = 'admin.html';
+                        window.location.href = 'admin/dashboard.html';
                     } else if (result.role === 'student') {
                         localStorage.setItem('toastMessage', 'Login successful!');
                         window.location.href = 'user/userDashboard.html';

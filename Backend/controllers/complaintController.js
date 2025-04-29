@@ -34,23 +34,30 @@ const showMyComplaint = async (req, res) =>{
 }
 
 const complaintSolved = async (req, res) => {
-    try{
+    try {
         const _id = req.params.id;
-        if(!_id){
-            return res.status(400).json({message: "Complaint ID (_id) is required to mark it as solved."});
+        if (!_id) {
+            return res.status(400).json({ message: "Complaint ID (_id) is required to mark it as solved." });
         }
 
-        const theComplaint = await ComplaintModel.findByIdAndUpdate(_id, {isSolved: true, status: "resolved"}, {new: true});
+        const { isSolved } = req.body; // Get the isSolved value from request body
 
-        if(!theComplaint){
-            return res.status(404).json({ message: "Complaint not found"});
+        const updateData = {
+            status: "resolved",
+            isSolved: isSolved || "Satisfied" // Default to "Satisfied" if not provided
+        };
+
+        const theComplaint = await ComplaintModel.findByIdAndUpdate(_id, updateData, { new: true });
+
+        if (!theComplaint) {
+            return res.status(404).json({ message: "Complaint not found" });
         }
 
-        return res.status(200).json({ message: "Complaint is marked as SOLVED!", complaint: theComplaint });
+        return res.status(200).json({ message: "Complaint status updated!", complaint: theComplaint });
 
-    }catch(err){
-        console.error("Error in updating the solved status of complaint. Error: ", err );
-        return res.status(500).json({message: "Internal server error"});
+    } catch (err) {
+        console.error("Error in updating the solved status of complaint. Error: ", err);
+        return res.status(500).json({ message: "Internal server error" });
     }
 }
 
