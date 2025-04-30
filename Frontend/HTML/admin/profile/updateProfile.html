@@ -1,63 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Update User Details</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <style>
     body {
       background-color: #f8f9fa;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+      min-height: 100vh;
     }
-
-    .container {
-      margin-top: 50px;
-    }
-
-    .form-section {
-      background-color: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    .profile-container {
       max-width: 600px;
-      margin: auto;
+      margin: 40px auto;
+      padding: 0 15px;
     }
-
-    .form-section h3 {
-      margin-bottom: 25px;
-      text-align: center;
+    .profile-card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+      border-top: 4px solid #5fe6fa;
+      padding: 30px;
     }
-
-    .action-buttons a {
-      color: white;
-      text-decoration: none;
+    .profile-header {
+      
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .profile-title {
+      color: #2c3e50;
+      font-weight: 600;
+      margin: 0;
+    }
+    .form-label {
+      font-weight: 500;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+    .form-control {
+      padding: 10px 15px;
+      border-radius: 6px;
+    }
+    .btn-group {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .btn-update {
+      background-color: #198754;
+      padding: 10px 25px;
+      font-weight: 500;
+    }
+    @media (max-width: 576px) {
+      .btn-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .btn-group .btn {
+        width: 100%;
+      }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="form-section">
-      <h3>Update Your Profile</h3>
+  <div class="container profile-container">
+    <div class="profile-card">
+      <div class="profile-header">
+        <h3 class="profile-title"><i class="bi bi-person-gear me-2"></i>Update Your Profile</h3>
+      </div>
+      
       <form id="updateUserForm" class="needs-validation" novalidate>
-        <div class="row g-3">
-          <div class="col-md-12">
-            <label for="mobile" class="form-label">Mobile</label>
-            <input type="text" class="form-control" id="mobile" required />
-          </div>
-
-          <div class="col-md-12">
-            <label for="hostelNo" class="form-label">Hostel No</label>
-            <input type="number" class="form-control" id="hostelNo" required />
-          </div>
+        <div class="mb-4">
+          <label for="mobile" class="form-label">Mobile Number</label>
+          <input type="text" class="form-control" id="mobile" required
+                 placeholder="Enter your mobile number">
         </div>
-
-        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4 action-buttons">
-          <button type="submit" class="btn btn-success">Update</button>
-          <a href="./viewProfile.html" class="btn btn-primary">View Profile</a>
-          <a href="../dashboard.html" class="btn btn-secondary">Dashboard</a>
+        
+        <div class="mb-4">
+          <label for="hostelNo" class="form-label">Hostel Number</label>
+          <input type="number" class="form-control" id="hostelNo" required
+                 placeholder="Enter your hostel number">
+        </div>
+        
+        <div class="btn-group">
+          <button type="submit" class="btn btn-info">
+            <i class="bi bi-check-circle me-2"></i>Update
+          </button>
+          <a href="./viewProfile.html" class="btn btn-outline-info">
+            <i class="bi bi-person-lines-fill me-2"></i>View Profile
+          </a>
+          <a href="../dashboard.html" class="btn btn-outline-info">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+          </a>
         </div>
       </form>
     </div>
@@ -68,12 +108,19 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="successModalLabel">Success</h5>
+          <h5 class="modal-title" id="successModalLabel">
+            <i class="bi bi-check-circle-fill me-2"></i>Profile Updated
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">User details updated successfully!</div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">Close</button>
+        <div class="modal-body text-center py-4">
+          <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+          <p class="mt-3">Your profile has been updated successfully!</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-success px-4" data-bs-dismiss="modal">
+            <i class="bi bi-check-lg me-2"></i>Continue
+          </button>
         </div>
       </div>
     </div>
@@ -81,7 +128,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Your JavaScript remains untouched
+    // Your existing JavaScript remains unchanged
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -127,5 +174,4 @@
     });
   </script>
 </body>
-
 </html>

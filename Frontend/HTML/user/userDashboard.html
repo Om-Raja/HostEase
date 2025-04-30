@@ -23,34 +23,38 @@
 
     <div class="mt-3">
       <a href="./profile/profile.html" id="profileLink" class="active">
-        <i class="bi bi-person-fill"></i> Student Profile
+        <i class="bi bi-person-circle"></i> Student Profile
       </a>
       <a href="./query/addQuery.html" id="queryLink">
-        <i class="bi bi-question-circle-fill"></i> Submit Query
+        <i class="bi bi-pencil-square"></i> Submit Query
       </a>
       <a href="./query/showQuery.html" id="queryLink">
-        <i class="bi bi-question-circle-fill"></i> My Queries
+        <i class="bi bi-chat-dots-fill"></i> My Queries
       </a>
       <a href="./leave/addLeaveRequest.html" id="leaveLink">
-        <i class="bi bi-calendar-check-fill"></i> Submit Leave Request
+        <i class="bi bi-file-earmark-plus"></i> Submit Leave Request
       </a>
       <a href="./leave/showLeaveRequest.html" id="leaveLink">
-        <i class="bi bi-calendar-check-fill"></i> Show My Leave Request
+        <i class="bi bi-journal-text"></i> Show My Leave Request
       </a>
       <a href="./complaint/registerComplaint.html" id="complaintLink">
-        <i class="bi bi-exclamation-triangle-fill"></i> Fill Complaint
+        <i class="bi bi-emoji-angry-fill"></i> Fill Complaint
       </a>
       <a href="./complaint/showComplaint.html" id="complaintLink">
-        <i class="bi bi-exclamation-triangle-fill"></i> Show Complaints
+        <i class="bi bi-clipboard-data"></i> Show Complaints
       </a>
       <a href="./viewNotice.html" id="noticesLink">
-        <i class="bi bi-megaphone-fill"></i> Show Notices
+        <i class="bi bi-bell-fill"></i> Show Notices
+      </a>
+      <a href="https://academics.gndec.ac.in/" id="noticesLink">
+        <i class="bi bi-cash-stack"></i> Pay Hostel Fees
       </a>
     </div>
+    
     <br><br>
 
     <div class="logout mt-auto">
-      <a href="../index.html" class="btn btn-outline-light w-100" onclick="logOut()">
+      <a href="../index.html" class="btn btn-danger btn-outline-light w-100" onclick="logOut()">
         <i class="bi bi-box-arrow-left"></i> Logout
       </a>
     </div>
@@ -59,19 +63,10 @@
   <!-- Main Content -->
   <div class="content">
     <!-- Profile Update Banner -->
-    <div class="profile-complete-banner">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-circle-fill me-3 fs-4"></i>
-        <div>
-          <strong>Important:</strong> Please complete your profile to access all features of the dashboard.
-        </div>
-      </div>
-      <a href="./profile/studentDetailForm.html" class="btn btn-primary btn-sm">
-        <i class="bi bi-pencil-fill"></i> Update Profile Now
-      </a>
-      
-      
-    </div>
+    <a href="./profile/studentDetailForm.html" class="btn btn-info btn-sm update-profile-btn">
+      <i class="bi bi-pencil-fill"></i> Update Profile Now
+    </a>
+  
 
     <!-- Welcome Header -->
     <div class="profile-header">
