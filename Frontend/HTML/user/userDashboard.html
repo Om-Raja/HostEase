@@ -92,9 +92,21 @@
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "../login.html";
+        return;
+      }
+});
+
     // Logout function
     const logOut = () => {
       localStorage.removeItem("token");
+      localStorage.removeItem("name");
+      localStorage.removeItem("email");
+      localStorage.removeItem("toastMessage");
     }
 
 

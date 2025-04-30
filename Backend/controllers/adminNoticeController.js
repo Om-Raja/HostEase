@@ -3,12 +3,13 @@ const User = require("../models/user");
 
 const postNotice = async (req, res) => {
   try {
-    const { title, description, expiresAt } = req.body;
+    const { title, description, expiresAt, hostelNo } = req.body;
 
     const newNotice = new Notice({
       title,
       description,
       expiresAt,
+      hostelNo,
       careTaker: req.user._id,
     });
     const result = await newNotice.save();
@@ -33,11 +34,11 @@ const editNotice = async (req, res) => {
         .status(400)
         .json({ message: "Notice Id is required to update notice details" });
 
-    const { title, description, expiresAt } = req.body;
+    const { title, description, expiresAt, hostelNo } = req.body;
 
     const result = await Notice.findByIdAndUpdate(
       noticeId,
-      { title, description, expiresAt },
+      { title, description, expiresAt, hostelNo },
       { new: true, runValidators: true },
     );
     if (!result) {
@@ -57,7 +58,7 @@ const showAllNotices = async (req, res) => {
   try {
     const careTaker = await User.findById(req.user._id);
 
-    const allNotices = await Notice.find({ hostelNo: careTaker.hostelNo }).populate("user", "name email mobile");
+    const allNotices = await Notice.find({ hostelNo: careTaker.hostelNo }).populate("careTaker", "name email mobile");
     if (!allNotices || allNotices.length === 0) {
       return res
         .status(404)
