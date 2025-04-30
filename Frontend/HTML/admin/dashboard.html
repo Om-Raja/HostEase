@@ -36,16 +36,16 @@
       <a href="./complaint.html" id="complaintsLink">
         <i class="bi bi-exclamation-triangle-fill"></i> Student Complaints
       </a>
-      
+
       <a href="./postNotice.html" id="noticesLink">
         <i class="bi bi-megaphone-fill"></i> Post Notices
       </a>
-      
+
     </div>
     <br><br>
 
     <div class="logout mt-auto">
-      <a href="../index.html" class="btn btn-outline-light w-100" onclick="logOut()">
+      <a href="../index.html" class="btn btn-outline-light w-100 btn-danger" onclick="logOut()">
         <i class="bi bi-box-arrow-left"></i> Logout
       </a>
     </div>
@@ -54,20 +54,17 @@
   <!-- Main Content -->
   <div class="content">
     <!-- Dashboard Overview -->
+
     
-    <div class="profile-complete-banner">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-exclamation-circle-fill me-3 fs-4"></i>
-        <div>
-          <strong>Important:</strong> Please complete your profile before accessing all the features of the dashboard.
-        </div>
-      </div>
-      <a href="./profile/updateProfile.html" class="btn btn-primary btn-sm">
+      <a href="./profile/updateProfile.html" class="btn btn-info btn-sm update-profile-btn">
         <i class="bi bi-pencil-fill"></i> Update Profile Now
       </a>
-      
-      
-    </div>
+    
+    
+
+
+
+
 
     <!-- Welcome Header -->
     <div class="profile-header">
@@ -84,7 +81,7 @@
     </div>
 
     <!-- Recent Activity Section -->
-   
+
 
   </div>
 
@@ -92,31 +89,31 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const token = localStorage.getItem("token");
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = localStorage.getItem("token");
       if (!token) {
         window.location.href = ".././login.html";
         return;
       }
-});
+    });
 
     // Logout function
     const logOut = () => {
       localStorage.removeItem("token");
       localStorage.removeItem("name");
       localStorage.removeItem("email");
-      localStorage.removeItem("toastMessage");
+      localStorage.removeItem("toast");
     }
 
     // Display username and today's date
     document.getElementById("username").innerHTML = localStorage.getItem("name");
-    
 
-    
+
+
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById("todayDate").innerHTML = today.toLocaleDateString('en-US', options);
-    
+
     // You would typically fetch these values from an API in a real application
     // document.getElementById("pendingQueries").innerHTML = data.pendingQueries;
     // document.getElementById("leaveRequests").innerHTML = data.leaveRequests;
