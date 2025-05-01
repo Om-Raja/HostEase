@@ -3,10 +3,16 @@ const nodemailer = require("nodemailer");
 
 // Send OTP
 const sendOtpController = async (req, res) => {
+    try {
     const { email } = req.body;
+
+    const doesAlredyExist = await Otp.findOne({email});
+    if(doesAlredyExist){
+        return res.status(400).json({message: "OTP is already sent to your email ", email});
+    }
+    
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    try {
         // Save OTP to the database
         await Otp.create({ email, otp });
 
