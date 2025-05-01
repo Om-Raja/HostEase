@@ -47,7 +47,8 @@
 }
 
 .navbar{
-  background-color: #008080;
+  /* background-color: #008080; */
+  background-color: #0dcaf0;
   box-shadow: 0 5px 10px #333;
     border-radius: 0 0 18px 18px;
 }
