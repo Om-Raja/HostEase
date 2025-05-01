@@ -1,5 +1,6 @@
 const ComplaintModel = require("../models/complaint");
 const User = require("../models/user");
+const nodemailer = require("nodemailer");
 
 const updateComplaint = async (req, res)=>{
     try{
@@ -7,11 +8,35 @@ const updateComplaint = async (req, res)=>{
         if(!complaintId){
             return res.status(400).json({message: "Complaint id is required to update complaint"});
         }
+
+        
         const {responseText, status} = req.body;
         const result = await ComplaintModel.findByIdAndUpdate(complaintId, {responseText: responseText, status: status}, {new: true, runValidators: true});
         if(!result){
             return res.status(400).json({message: "Invalid complaint ID"});
         }
+        
+        const theComplaint = await ComplaintModel.findById(complaintId).populate("user", "name email");
+        if(!theComplaint) return res.status(404).json({message: "Complaint not found"});
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: theComplaint.user.email,
+            subject: "Response to your complaint",
+            html: `Hi, <b> ${theComplaint.user.name}!</b> CareTaker has responded to your registered complaint.<br/>
+            Complaint: ${theComplaint.complaintText} </br>
+            Response: ${theComplaint.responseText}`,
+        };
+
+        await transporter.sendMail(mailOptions);
 
         res.status(200).json({message: "Complaint status updated"});        
     }catch(err){
