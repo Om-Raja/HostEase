@@ -20,16 +20,8 @@ const userSchema = new Schema({
         required: true,
         default: "student",
     },
-    crn:{
-        type: String,
-        unique: true,
-        match: [/^\d{7}$/, "Roll number must be exactly 7 digits (numbers only)"]
-    },
-    urn:{
-        type: String,
-        unique: true,
-        match: [/^\d{7}$/, "Roll number must be exactly 7 digits (numbers only)"]
-    },
+    crn:String,
+    urn:String,
     room: {
         type: Number,
         min: 1,
@@ -47,7 +39,7 @@ const userSchema = new Schema({
     fatherPhoneNo: String,
     hostelNo: {
         type: Number,
-        enum:[1, 2, 3, 4, 5],
+        enum:[1, 2, 3, 4, 5]
     }
 })
 

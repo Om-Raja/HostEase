@@ -36,6 +36,7 @@ const signUpController = async function (req, res) {
       success: true,
     });
   } catch (err) {
+    console.error("Error: ", err);
     res.status(500).json({
       message: "Internal server error",
       success: false,
