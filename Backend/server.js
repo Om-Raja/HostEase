@@ -14,6 +14,8 @@ const leaveRouter = require("./Routes/leaveRoutes");
 const adminNoticeRouter = require("./Routes/admin-routes/adminNoticeRoute");
 const studentNoticeRouter = require("./Routes/noticeRoute");
 const adminLeaveRouter = require("./Routes/admin-routes/adminLeaveRoutes");
+const superAdminRouter = require("./Routes/super-admin/superAdminRoute");
+const messRoutes = require("./Routes/mess-routes/messRoutes.js")
 const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
 
@@ -36,6 +38,8 @@ app.use("/api/leave", leaveRouter);
 app.use("/api/admin/leave", adminLeaveRouter);
 app.use("/api/admin/notice", adminNoticeRouter);
 app.use("/api/student/notice", studentNoticeRouter);
+app.use("/api/superAdmin", superAdminRouter);
+app.use("/api/mess", messRoutes);
 
 // Handle undefined routes
 app.use((req, res, next)=>{
