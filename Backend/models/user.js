@@ -40,7 +40,8 @@ const userSchema = new Schema({
     hostelNo: {
         type: Number,
         enum:[1, 2, 3, 4, 5]
-    }
+    },
+    messAccount: Number,
 })
 
 

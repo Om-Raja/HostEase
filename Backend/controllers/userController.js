@@ -2,7 +2,7 @@ const User = require("../models/user");
 
 const updateStudentDetails = async (req, res) => {
   try {
-    const {crn, urn, room, branch, batch, mobile, fatherName, motherName, address, fatherPhoneNo, hostelNo } = req.body;
+    const {crn, urn, room, branch, batch, mobile, fatherName, motherName, address, fatherPhoneNo, hostelNo, messAccount } = req.body;
 
     const result = await User.findByIdAndUpdate(req.user._id, {
         crn: crn,
@@ -15,14 +15,15 @@ const updateStudentDetails = async (req, res) => {
         motherName: motherName,
         address: address,
         fatherPhoneNo: fatherPhoneNo,
-        hostelNo: hostelNo
+        hostelNo: hostelNo,
+        messAccount: messAccount,
      });
 
     if (!result) {
       return res.status(500).json({ message: "Maybe user doesn't exist" });
     }
     
-    res.status(200).json({ message: "Student updated successfully!" });
+    res.status(200).json({ message: "Student details updated successfully!" });
   } catch (err) {
     console.error("Error in updating student details.", err);
     res.status(500).json({ message: "Something went wrong" });
