@@ -5,6 +5,7 @@ const {isMessManager} = require("../../middlewares/checkRole.js");
 const {showBills, addBill} = require("../../controllers/mess/billController.js");
 
 router.get("/", isLoggedIn, isMessManager, showBills);
+router.get("/monthlyBill", isLoggedIn, isMessManager, showBills);
 router.post("/:id", isLoggedIn, isMessManager, addBill);
 
 module.exports = router;
