@@ -6,6 +6,7 @@ const messSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
+    name: String,
     messAccount: Number,
     currentBill:{
         type: Number,

@@ -33,6 +33,7 @@ const addBill = async (req, res) => {
       messAccount: bill.messAccount,
       currentBill: bill.currentBill,
       month: bill.month,
+      name: bill.name,
     });
     await newBill.save();
 
@@ -53,7 +54,7 @@ const addBill = async (req, res) => {
 
 const getBill = async (req, res) => {
   try {
-    const month = req.body.month;
+    const month = req.params.month;
 
     const monthlyBill = await MessBill.find({ month });
     if (!monthlyBill) {
