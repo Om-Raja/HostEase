@@ -21,7 +21,6 @@ const messSchema = new Schema({
         default: false,
     },
     month: String,
-    year: Number,
 });
 
 const MessBill = mongoose.model("MessBill", messSchema);
