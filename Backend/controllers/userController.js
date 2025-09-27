@@ -45,4 +45,25 @@ const getStudentDetails = async (req, res) => {
   }
 };
 
-module.exports = { updateStudentDetails, getStudentDetails };
+
+// SuperAdmin: Assign role to any user
+const assignUserRole = async (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    // Only allow valid roles
+    const validRoles = ["student", "admin", "superAdmin", "careTaker", "messManager"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ message: "Invalid role." });
+    }
+    const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.status(200).json({ message: `Role updated to ${role} for user ${user.email}.`, user });
+  } catch (err) {
+    console.error("Error assigning user role:", err);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+module.exports = { updateStudentDetails, getStudentDetails, assignUserRole };
