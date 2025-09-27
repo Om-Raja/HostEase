@@ -1,12 +1,12 @@
 const router = require("express").Router();
 
 const isLoggedIn = require("../../middlewares/isLoggedIn");
-const isAdmin = require("../../middlewares/isAdmin");
+const {isCareTaker} = require("../../middlewares/checkRole.js");
 const validateNotice = require("../../middlewares/validateNotice");
 const {postNotice, editNotice, showAllNotices} = require("../../controllers/adminNoticeController");
 
-router.post("/", isLoggedIn, isAdmin, validateNotice, postNotice);
-router.get("/", isLoggedIn, isAdmin, showAllNotices);
-router.patch("/:id", isLoggedIn, isAdmin, validateNotice, editNotice);
+router.post("/", isLoggedIn, isCareTaker, validateNotice, postNotice);
+router.get("/", isLoggedIn, isCareTaker, showAllNotices);
+router.patch("/:id", isLoggedIn, isCareTaker, validateNotice, editNotice);
 
 module.exports = router;
