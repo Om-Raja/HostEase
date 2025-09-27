@@ -47,7 +47,7 @@ const validateUserData = (req, res, next) => {
             "any.only": "Hostel number must be one of 1, 2, 3, 4 or 5.",
             "any.required": "Hostel number is required.",
         }),
-        messAccount: Joi.number().required().message({
+        messAccount: Joi.number().required().messages({
             "any.required": "Mess Account number is required",
         })
     });

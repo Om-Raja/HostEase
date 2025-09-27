@@ -36,6 +36,7 @@ const sendOtpController = async (req, res) => {
 
         res.status(200).json({ message: "OTP sent successfully. Email may take 2 minutes to recieve on your gndec webmail. Your OTP is valid for 5 minutes." });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: "Failed to send OTP", error });
     }
 };

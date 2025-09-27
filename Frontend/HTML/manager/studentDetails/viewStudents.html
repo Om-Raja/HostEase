@@ -58,7 +58,7 @@
     
     <h3 class="mb-4 text-primary" style="text-align: center;"><strong>Student Details</strong></h3>
     <hr>
-    <a href="./dashboard.html" class="btn btn-info mb-3 px-3">
+    <a href="../dashboard.html" class="btn btn-info mb-3 px-3">
       <i class="bi bi-arrow-left"></i> 
     </a>
     <div class="table-responsive">
@@ -101,10 +101,10 @@
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem("token");
-      if (!token) {
-        window.location.href = ".././login.html";
-        return;
-      }
+    //   if (!token) {
+    //     window.location.href = "../../login.html";
+    //     return;
+    //   }
 
       const studentTableBody = document.getElementById('studentTableBody');
       const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
@@ -168,26 +168,17 @@
             <p><strong>CRN:</strong> ${student.crn || 'N/A'}</p>
             <p><strong>URN:</strong> ${student.urn || 'N/A'}</p>
             <p><strong>Room No:</strong> ${student.room || 'N/A'}</p>
-            <p><strong>Hostel No:</strong> ${student.hostelNo || 'N/A'}</p>
+           
             <p><strong>Branch:</strong> ${student.branch || 'N/A'}</p>
             <p><strong>Batch:</strong> ${student.batch || 'N/A'}</p>
           </div>
           <div class="col-md-6">
-           
-            <p><strong>Mobile:</strong> ${student.mobile || 'N/A'}</p>
-             <p><strong>Email:</strong> ${student.email || 'N/A'}</p>
-             <p><strong>Mother's Name:</strong> ${student.motherName || 'N/A'}</p>
-             <p><strong>Father's Name:</strong> ${student.fatherName || 'N/A'}</p>
-             <p><strong>Father's Mobile:</strong> ${student.fatherPhoneNo || 'N/A'}</p>
+                <p><strong>Mobile:</strong> ${student.mobile || 'N/A'}</p>         
              <p><strong>Mess Account:</strong> ${student.messAccount || 'N/A'}</p>
             
           </div>
         </div>
-        <div class="row ">
-          <div class="col-12">
-            <p><strong>Address:</strong> ${student.address || 'N/A'}</p>
-          </div>
-        </div>
+        
       `;
       
       const modal = new bootstrap.Modal(document.getElementById('studentModal'));

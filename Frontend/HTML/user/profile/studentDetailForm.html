@@ -60,52 +60,57 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label for="crn" class="form-label">CRN</label>
-            <input type="text" class="form-control" id="crn" required>
+            <input type="text" class="form-control" id="crn" >
           </div>
           <div class="col-md-6">
             <label for="urn" class="form-label">URN</label>
-            <input type="text" class="form-control" id="urn" required>
+            <input type="text" class="form-control" id="urn" >
           </div>
           
           <div class="col-md-6">
             <label for="roomNo" class="form-label">Room No</label>
-            <input type="number" class="form-control" id="roomNo" required>
+            <input type="number" class="form-control" id="roomNo" >
           </div>
           <div class="col-md-6">
             <label for="batch" class="form-label">Batch</label>
-            <input type="text" class="form-control" id="batch" required>
+            <input type="text" class="form-control" id="batch" >
           </div>
           
           <div class="col-md-6">
             <label for="branch" class="form-label">Branch</label>
-            <input type="text" class="form-control" id="branch" required>
+            <input type="text" class="form-control" id="branch" >
           </div>
           <div class="col-md-6">
             <label for="mobile" class="form-label">Mobile</label>
-            <input type="text" class="form-control" id="mobile" required>
+            <input type="text" class="form-control" id="mobile" >
           </div>
           
           <div class="col-md-6">
             <label for="fatherName" class="form-label">Father's Name</label>
-            <input type="text" class="form-control" id="fatherName" required>
+            <input type="text" class="form-control" id="fatherName" >
           </div>
           <div class="col-md-6">
             <label for="motherName" class="form-label">Mother's Name</label>
-            <input type="text" class="form-control" id="motherName" required>
+            <input type="text" class="form-control" id="motherName" >
           </div>
           
           <div class="col-md-6">
             <label for="fatherMobile" class="form-label">Father's Mobile</label>
-            <input type="text" class="form-control" id="fatherMobile" required>
+            <input type="text" class="form-control" id="fatherMobile" >
           </div>
           <div class="col-md-6">
             <label for="hostelNo" class="form-label">Hostel No</label>
-            <input type="number" class="form-control" id="hostelNo" required>
+            <input type="number" class="form-control" id="hostelNo" >
+          </div>
+
+           <div class="col-md-6">
+            <label for="messAccountNumber" class="form-label">Mess Account Number</label>
+            <input type="number" class="form-control" id="messAccountNumber" >
           </div>
           
           <div class="col-12">
             <label for="address" class="form-label">Address</label>
-            <textarea class="form-control" id="address" rows="3" required></textarea>
+            <textarea class="form-control" id="address" rows="3" ></textarea>
           </div>
         </div>
         
@@ -176,6 +181,7 @@
           motherName: document.getElementById('motherName').value.trim(),
           fatherPhoneNo: document.getElementById('fatherMobile').value.trim(),
           hostelNo: document.getElementById('hostelNo').value.trim(),
+          messAccount: document.getElementById('messAccountNumber').value.trim(),
           address: document.getElementById('address').value.trim(),
         };
 
@@ -204,7 +210,49 @@
       } else {
         this.reportValidity();
       }
+
+      
     });
+
+
+ 
+  // Fetch user details and prefill the form
+  async function fetchUserDetails() {
+    try {
+      const response = await fetch('http://localhost:3000/api/user', {
+        method: 'GET',
+        headers: {
+          'Authorization': `${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Prefill form fields with user data
+        document.getElementById('crn').value = data.userData.crn || '';
+        document.getElementById('urn').value = data.userData.urn || '';
+        document.getElementById('roomNo').value = data.userData.room || '';
+        document.getElementById('batch').value = data.userData.batch || '';
+        document.getElementById('branch').value = data.userData.branch || '';
+        document.getElementById('mobile').value = data.userData.mobile || '';
+        document.getElementById('fatherName').value = data.userData.fatherName || '';
+        document.getElementById('motherName').value = data.userData.motherName || '';
+        document.getElementById('fatherMobile').value = data.userData.fatherPhoneNo || '';
+        document.getElementById('hostelNo').value = data.userData.hostelNo || '';
+        document.getElementById('messAccountNumber').value = data.userData.messAccount || '';
+        document.getElementById('address').value = data.userData.address || '';
+      } else {
+        const errorData = await response.json();
+        console.error('Error fetching user details:', errorData);
+        alert(`Error: ${errorData.message || 'Failed to fetch user details'}`);
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+      alert('Failed to load user details. Please try again.');
+    }
+  }
+
   </script>
 
    <!-- chatbot -->
