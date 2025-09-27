@@ -49,7 +49,8 @@ const validateUserData = (req, res, next) => {
         }),
         messAccount: Joi.number().required().messages({
             "any.required": "Mess Account number is required",
-        })
+        }),
+        currentMessBill: Joi.number(),
     });
 
     const { error } = userDataSchema.validate(req.body);

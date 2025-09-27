@@ -38,7 +38,7 @@ app.use("/api/leave", leaveRouter);
 app.use("/api/admin/leave", adminLeaveRouter);
 app.use("/api/admin/notice", adminNoticeRouter);
 app.use("/api/student/notice", studentNoticeRouter);
-app.use("/api/superAdmin", superAdminRouter);
+// app.use("/api/superAdmin", superAdminRouter);
 app.use("/api/mess", messRoutes);
 
 // Handle undefined routes

@@ -1,12 +1,12 @@
 const MessBill = require("../../models/mess.js");
+const Student = require("../../models/user.js");
 
 const showBills = async (req, res) => {
 try{
-    const {month, year} = req.body;
-    const bills = await MessBill.find({ onSemesterTraining: false, month, year});
+    const students = await Student.find({hostelNo: req.user.hostelNo});
   
-    if (bills) res.json({ bills, message: "Bills fetched" });
-    else res.json({message: "No bill found"})
+    if (students) res.json({ students, message: "Bills fetched" });
+    else res.json({message: "No bill found"});
 }catch(err){
     console.log("Error in fetching bill");
     console.error("Error: ", err);
@@ -17,10 +17,10 @@ try{
 
 const addBill = async(req, res) => {
     try{
-        const bill = req.body;
+        const bill = req.body; //account, user:_id, name, bill
         if(!bill) return res.status(400).json({message: "Month, year or Bill cannot be empty."});
 
-        const newBill = new MessBill({...bill, user: req.user._id});
+        const newBill = new MessBill({...bill});
         await newBill.save();
 
         res.status(201).json({message: "Bill added"});

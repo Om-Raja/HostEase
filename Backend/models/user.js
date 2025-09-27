@@ -42,7 +42,11 @@ const userSchema = new Schema({
         enum:[1, 2, 3, 4, 5]
     },
     messAccount: Number,
-})
+    currentMessBill: {
+        type: Number,
+        default: 0,
+    }
+});
 
 
 const User = mongoose.model("User", userSchema);
