@@ -4,7 +4,6 @@ const Student = require("../../models/user.js");
 const showBills = async (req, res) => {
 try{
     const students = await Student.find({role: "student", hostelNo: req.user.hostelNo});
-    console.log(typeOf(req.user.hoselNo)); 
   
     if (students) res.json({ students, message: "Bills fetched" });
     else res.json({message: "No bill found"});
@@ -12,7 +11,7 @@ try{
     console.log("Error in fetching bill");
     console.error("Error: ", err);
 
-    res.status(500).json({message : "There was some problem in getting bills"});
+    res.status(500).json({message : "There was some problem in getting student details"});
 }
 };
 
