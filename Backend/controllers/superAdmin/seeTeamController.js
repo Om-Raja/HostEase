@@ -6,4 +6,4 @@ const User = require("../../models/user");
 //     }
 // }
 
-module.exports = {seeTeamController};
+// module.exports = {seeTeamController};
