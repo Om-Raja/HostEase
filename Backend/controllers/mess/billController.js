@@ -17,11 +17,18 @@ try{
 
 const addBill = async(req, res) => {
     try{
-        const bill = req.body; //account, user:_id, name, bill
-        if(!bill) return res.status(400).json({message: "Month, year or Bill cannot be empty."});
+        const bill = req.body; //currentBill, totalBill, name, messAccount, month, studentId
+        if(!bill) return res.status(400).json({message: "Month or Bill cannot be empty."});
 
-        const newBill = new MessBill({...bill});
+        const newBill = new MessBill({
+            user: bill.studentId,
+            messAccount: bill.messAccount,
+            currentBill: bill.currentBill,
+            month: bill.month,
+        });
         await newBill.save();
+
+        await Student.findByIdAndUpdate(bill.studentId, {currentMessBill: bill.totalBill})
 
         res.status(201).json({message: "Bill added"});
 
