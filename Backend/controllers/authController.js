@@ -58,7 +58,7 @@ const loginController = async function (req, res) {
     bcrypt.compare(password, user.password, function (err, result) {
       if (result) {
         const token = jwt.sign(
-          { email: user.email, role: user.role, _id: user._id },
+          { email: user.email, role: user.role, _id: user._id, hostelNo: user.hostelNo},
           process.env.JWT_SECRET,
           { expiresIn: "24h" },
         );

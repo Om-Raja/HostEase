@@ -3,7 +3,8 @@ const Student = require("../../models/user.js");
 
 const showBills = async (req, res) => {
 try{
-    const students = await Student.find({hostelNo: req.user.hostelNo});
+    const students = await Student.find({role: "student", hostelNo: req.user.hostelNo});
+    console.log(typeOf(req.user.hoselNo)); 
   
     if (students) res.json({ students, message: "Bills fetched" });
     else res.json({message: "No bill found"});
