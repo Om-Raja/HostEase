@@ -16,14 +16,16 @@ const fetchEmployee = async (req, res) =>{
 
 const assignRole = async(req, res) => {
     try{
-        const {email, role, employeeId} = req.body;
+        const role = req.body.role;
 
         if(!role){
+            const email = req.body.email;
+            if(!email) return res.status(400).json({message: "Email is required to asssign role"});
             const person = await User.find({email});
             return res.json({person});
         }
 
-
+        const employeeId = req.body.employeeId;
         const result = await User.findByIdAndUpdate(employeeId, {role: role}, {new: true});
         if(!result) return res.json({message: "Could not change the role"});
 
