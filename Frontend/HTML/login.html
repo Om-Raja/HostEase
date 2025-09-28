@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HostEase Login</title>
   <link rel="stylesheet" href="../CSS/login.css" />
-  
+
 </head>
+
 <body>
   <div class="container">
     <div class="left">
@@ -31,50 +33,59 @@
 
   <script>
     function handleLoginFormSubmit(e) {
-        e.preventDefault();
+      e.preventDefault();
 
-        const email = document.querySelector('input[type="email"]').value;
-        const password = document.querySelector('input[type="password"]').value;
+      const email = document.querySelector('input[type="email"]').value;
+      const password = document.querySelector('input[type="password"]').value;
 
-        fetch('http://localhost:3000/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
+      fetch('http://localhost:3000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("name", result.name);
+            localStorage.setItem("email", result.email);
+            console.log(result.name);
+            console.log(result.email);
+            if (result.role === 'superAdmin') {
+              localStorage.setItem('toastMessage', 'Login successful!');
+              window.location.href = 'superAdmin/dashboard.html';
+            } else if (result.role === 'student') {
+              localStorage.setItem('toastMessage', 'Login successful!');
+              window.location.href = 'user/userDashboard.html';
+            }
+            else if (result.role === 'messManager') {
+              localStorage.setItem('toastMessage', 'Login successful!');
+              window.location.href = 'manager/dashboard.html';
+            }
+            else if (result.role === 'careTaker') {
+              localStorage.setItem('toastMessage', 'Login successful!');
+              window.location.href = 'admin/dashboard.html';
+            } else {
+              alert('Unknown role. Please contact support.');
+            }
+          } else {
+            alert(result.message || 'Login failed!');
+          }
         })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                  localStorage.setItem("token", result.token);
-                  localStorage.setItem("name", result.name);
-                  localStorage.setItem("email", result.email);
-                  console.log(result.name);
-                  console.log(result.email);
-                    if (result.role === 'admin') {
-                        localStorage.setItem('toastMessage', 'Login successful!');
-                        window.location.href = 'admin/dashboard.html';
-                    } else if (result.role === 'student') {
-                        localStorage.setItem('toastMessage', 'Login successful!');
-                        window.location.href = 'user/userDashboard.html';
-                    } else {
-                        alert('Unknown role. Please contact support.');
-                    }
-                } else {
-                    alert(result.message || 'Login failed!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
-            });
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred. Please try again later.');
+        });
     }
 
     document.querySelector('.login-form').addEventListener('submit', handleLoginFormSubmit);
   </script>
 
-   <!-- chatbot -->
-   <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
-   <script src="https://files.bpcontent.cloud/2025/04/30/18/20250430182546-RKVF8XUZ.js"></script>
+  <!-- chatbot -->
+  <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2025/04/30/18/20250430182546-RKVF8XUZ.js"></script>
 </body>
+
 </html>

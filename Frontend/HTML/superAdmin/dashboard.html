@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mess Manager Dashboard</title>
+  <title>Super Admin Dashboard</title>
   <link rel="stylesheet" href="../../CSS/user.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -15,27 +15,20 @@
   <!-- Sidebar -->
   <div class="sidebar d-flex flex-column">
     <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary">
-      <span class="fw-bold fs-5">Mess Manager Dashboard</span>
+      <span class="fw-bold fs-5">Super Admin Dashboard</span>
       <img src="../../images/caretake git.png" id="profileIcon" class="rounded-circle" width="40" height="40"
         style="cursor:pointer; object-fit: cover;" />
     </div>
 
     <div class="mt-3">
-      <a href="./profile/viewProfile.html" id="profileLink" class="active">
-        <i class="bi bi-person-fill"></i> My Profile
+      <a href="./faculty.html" id="profileLink" class="active">
+        <i class="bi bi-person-fill"></i> Facilities & Services
       </a>
-      <a href="./studentDetails/viewStudents.html" id="studentsLink">
-        <i class="bi bi-people-fill"></i> Student Details
+      <a href="./assignRoles.html" id="studentsLink">
+        <i class="bi bi-people-fill"></i> Assign Roles
       </a>
-      <a href="./bill/addBill.html" id="queriesLink">
-        <i class="bi bi-question-circle-fill"></i> Add Bill
-      </a>
-      <a href="./bill/viewBill.html" id="leaveLink">
-        <i class="bi bi-calendar-check-fill"></i> View Bill
-      </a>
-      <a href="./bill/approvePayment.html" id="leaveLink">
-        <i class="bi bi-calendar-check-fill"></i> Approve Payment
-      </a>
+     
+
     </div>
     <br><br>
 
@@ -50,23 +43,13 @@
   <div class="content">
     <!-- Dashboard Overview -->
 
-    
-      <a href="./profile/updateProfile.html" class="btn btn-outline-info btn-sm update-profile-btn p-2 rounded-3">
-        Update Profile &nbsp;<i class="bi bi-pencil-fill"></i> 
-      </a>
-    
-    
-
-
-
-
 
     <!-- Welcome Header -->
     <div class="profile-header">
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="mb-1">Welcome <span id="username" class="text-primary"></span></h4>
-          <p class="text-muted mb-0">Mess Manager</p>
+          <p class="text-muted mb-0">Super Admin</p>
         </div>
         <div class="alert alert-info">
           <i class=""></i>
@@ -92,7 +75,6 @@
       }
     });
 
-    
     // Logout function
     const logOut = () => {
       localStorage.removeItem("token");
@@ -110,7 +92,11 @@
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById("todayDate").innerHTML = today.toLocaleDateString('en-US', options);
 
- 
+    // You would typically fetch these values from an API in a real application
+    // document.getElementById("pendingQueries").innerHTML = data.pendingQueries;
+    // document.getElementById("leaveRequests").innerHTML = data.leaveRequests;
+    // document.getElementById("activeComplaints").innerHTML = data.activeComplaints;
+    // document.getElementById("assignedHostel").innerHTML = data.assignedHostel;
   </script>
 
    <!-- chatbot -->

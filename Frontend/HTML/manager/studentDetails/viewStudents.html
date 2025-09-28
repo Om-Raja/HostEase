@@ -65,9 +65,10 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr>
-            <th>Room No</th>
+            <th>Mess Account</th>
             <th>Name</th>
             <th>Mobile</th>
+            <th>Current Bill</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -101,10 +102,10 @@
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       const token = localStorage.getItem("token");
-    //   if (!token) {
-    //     window.location.href = "../../login.html";
-    //     return;
-    //   }
+      if (!token) {
+        window.location.href = "../../login.html";
+        return;
+      }
 
       const studentTableBody = document.getElementById('studentTableBody');
       const studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
@@ -112,7 +113,7 @@
       // Fetch student details
       async function fetchStudentDetails() {
         try {
-          const response = await fetch('http://localhost:3000/api/admin/student', {
+          const response = await fetch('http://localhost:3000/api/mess', {
             method: 'GET',
             headers: {
               'Authorization': `${token}`
@@ -128,9 +129,10 @@
               students.forEach(student => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                  <td>${student.room || 'N/A'}</td>
+                  <td>${student.messAccount || 'N/A'}</td>
                   <td>${student.name || 'N/A'}</td>
                   <td>${student.mobile || 'N/A'}</td>
+                   <td> &#8377; ${student.currentMessBill }</td>
                   <td>
                     <button class="btn btn-sm btn-details" onclick="showStudentDetails(${JSON.stringify(student).replace(/"/g, '&quot;')})">
                       View Details
