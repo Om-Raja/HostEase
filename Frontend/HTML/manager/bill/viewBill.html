@@ -96,7 +96,7 @@
 
         if (response.ok) {
           const data = await response.json();
-          const bills = data.monthlyBill || [];
+          const bills = data.filteredBill || [];
           const billTable = document.getElementById("billTableBody");
           billTable.innerHTML = "";
 

@@ -63,8 +63,8 @@
     <div class="hidden" id="assignRoleContainer">
       <label for="roleSelect" class="form-label">Assign Role</label>
       <select class="form-select" id="roleSelect">
-        <option value="caretaker">Caretaker</option>
-        <option value="manager">Manager</option>
+        <option value="careTaker">Caretaker</option>
+        <option value="messManager">Manager</option>
       </select>
       <button class="btn btn-success mt-3" id="assignRoleBtn">Submit</button>
     </div>
@@ -89,27 +89,28 @@
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/api/superAdmin`, {
-          method: 'PATCH',
+        const response = await fetch(`http://localhost:3000/api/superAdmin?email=${email}`, {
+          method: 'GET',
           headers: {
             'Authorization': `${token}`
-          },
-          body: JSON.stringify({ email })
-          
+          },        
         });
 
         if (response.ok) {
           const user = await response.json();
-          selectedUserId = user._id;
+         
+          selectedUserId = user.person._id;
+          console.log("user is : ", user);
+          console.log("selecteduser id is : ", selectedUserId);
 
           // Populate user details table
           const userDetailsTable = document.getElementById('userDetailsTable');
           userDetailsTable.innerHTML = `
             <tr>
-              <td>${user.name}</td>
-              <td>${user.email}</td>
-              <td>${user.mobile}</td>
-              <td>${user.hostelNo || 'N/A'}</td>
+              <td>${user.person.name}</td>
+              <td>${user.person.email}</td>
+              <td>${user.person.mobile}</td>
+              <td>${user.person.hostelNo || 'N/A'}</td>
               <td>
                 <button class="btn btn-sm btn-primary" id="assignRoleToggleBtn">Assign Role</button>
               </td>
@@ -149,7 +150,7 @@
             'Content-Type': 'application/json',
             'Authorization': `${token}`
           },
-          body: JSON.stringify({ role })
+          body: JSON.stringify({ id:selectedUserId, role })
         });
 
         if (response.ok) {
