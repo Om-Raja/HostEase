@@ -3,13 +3,18 @@ const Student = require("../../models/user.js");
 
 const showBills = async (req, res) => {
   try {
+    const manager = await Student.findById(req.user._id);
+    if (!manager)
+      return res.status(404).json({ message: "Manager details not found" });
+
+
     const students = await Student.find({
       role: "student",
-      hostelNo: req.user.hostelNo,
+      hostelNo: manager.hostelNo,
     });
 
     if (students) res.json({ students, message: "Bills fetched" });
-    else res.json({ message: "No bill found" });
+    else res.json({ message: "No students found" });
   } catch (err) {
     console.log("Error in fetching bill");
     console.error("Error: ", err);
@@ -56,11 +61,18 @@ const getBill = async (req, res) => {
   try {
     const month = req.query.month;
 
-    const monthlyBill = await MessBill.find({ month });
-    if (!monthlyBill) {
+    const manager = await Student.findById(req.user._id);
+    if (!manager)
+      return res.status(404).json({ message: "Manager details not found" });
+
+    const managerHostel = manager.hostelNo;
+
+    const monthlyBill = await MessBill.find({ month }).populate({path: "user", match: {hostelNo: managerHostel}});
+    const filteredBill = monthlyBill.filter(bill => bill.user !== null);
+    if (!filteredBill || filteredBill.length === 0) {
       return res.status(404).json({ message: "No bills found" });
     }else{
-        res.json({monthlyBill, message: `Mess bill of ${month} fetched.`});
+        res.json({filteredBill, message: `Mess bill of ${month} fetched.`});
     }
   } catch (err) {
     console.error(err);

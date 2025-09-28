@@ -30,7 +30,7 @@ const assignRole = async(req, res) => {
 }
 
 const removeRole = async(req, res)=>{
-    const employeeId = req.query.employeeId;
+    const employeeId = req.query.id;
     if(!employeeId) return res.status(400).json({message:"Employee Id is required to remove him from the post"});
 
     const result = await User.findByIdAndDelete(employeeId);
@@ -43,7 +43,7 @@ const findTheGuy = async (req, res) => {
     const email = req.query.email;
     if(!email) return res.status(400).json({message: "Email is required"});
 
-    const person = await User.find({email});
+    const person = await User.findOne({email});
     if(!person) return res.status(404).json({message: "No person exist with this email"});
 
     res.json({person, message: "Found the guy"});

@@ -13,7 +13,7 @@ router.route("/")
 // SuperAdmin: Assign role to any user
 router.patch("/assign-role", isLoggedIn, isSuperAdmin, assignUserRole);
 
-router.patch("/admin", isLoggedIn, isAdmin, validateCareTakerData, updateStudentDetails);
+router.patch("/admin", isLoggedIn, validateCareTakerData, updateStudentDetails);
 
 module.exports = router;
 
