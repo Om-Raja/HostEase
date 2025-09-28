@@ -16,14 +16,15 @@ const fetchEmployee = async (req, res) =>{
 
 const assignRole = async(req, res) => {
     try{
-        const {email, role} = req.body;
+        const {email, role, employeeId} = req.body;
 
-        if(!email || !role) return res.status(400).json({message: "email and role are required to assign role"});
+        if(!role){
+            const person = await User.find({email});
+            return res.json({person});
+        }
 
-        const employee = await User.find({email});
-        if(!employee) return res.status(404).json({message: "No user found with this email"});
 
-        const result = await User.findByIdAndUpdate(employee._id, {role: role}, {new: true});
+        const result = await User.findByIdAndUpdate(employeeId, {role: role}, {new: true});
         if(!result) return res.json({message: "Could not change the role"});
 
         res.json({message: `${employee.name} is ${role} now`});
@@ -33,4 +34,14 @@ const assignRole = async(req, res) => {
     }
 }
 
-module.exports = {fetchEmployee, assignRole};
+const removeRole = async(req, res)=>{
+    const employeeId = req.query.employeeId;
+    if(!employeeId) return res.status(400).json({message:"Employee Id is required to remove him from the post"});
+
+    const result = await User.findByIdAndDelete(employeeId);
+    if(!result) res.json({message: "Either employee doesn't exist or we could not remove him. Try again"});
+
+    res.status(200).json({message: "Employee removed"});
+}
+
+module.exports = {fetchEmployee, assignRole, removeRole};

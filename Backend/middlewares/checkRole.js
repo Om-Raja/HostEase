@@ -33,7 +33,7 @@ const isMessManager = (req, res, next) => {
             req.user = decode;
             return next();
         }
-        return res.status(403).json({ message: "Access denied. Only a careTaker can perform this action." });
+        return res.status(403).json({ message: "Access denied. Only a mess manager can perform this action." });
     } catch (err) {
         return res.status(401).json({ message: "Invalid or expired token. Please log in again." });
     }
@@ -52,7 +52,7 @@ const isSuperAdmin = (req, res, next) => {
             req.user = decode;
             return next();
         }
-        return res.status(403).json({ message: "Access denied. Only a careTaker can perform this action." });
+        return res.status(403).json({ message: "Access denied. Only the super admin can perform this action." });
     } catch (err) {
         return res.status(401).json({ message: "Invalid or expired token. Please log in again." });
     }
