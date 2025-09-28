@@ -2,12 +2,19 @@ const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../../middlewares/isLoggedIn");
 const { isSuperAdmin } = require("../../middlewares/checkRole.js");
-const {fetchEmployee, assignRole, removeRole} = require("../../controllers/superAdmin/superAdminController.js");
+const {
+  fetchEmployee,
+  assignRole,
+  removeRole,
+  findTheGuy,
+} = require("../../controllers/superAdmin/superAdminController.js");
 
 router
   .route("/")
-  .get(isLoggedIn, isSuperAdmin, fetchEmployee)
+  .get(isLoggedIn, isSuperAdmin, findTheGuy)
   .patch(isLoggedIn, isSuperAdmin, assignRole)
   .delete(isLoggedIn, isSuperAdmin, removeRole);
+
+router.get("/employees", isLoggedIn, isSuperAdmin, fetchEmployee);
 
 module.exports = router;

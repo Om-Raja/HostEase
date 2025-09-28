@@ -16,17 +16,10 @@ const fetchEmployee = async (req, res) =>{
 
 const assignRole = async(req, res) => {
     try{
-        const role = req.body.role;
+        const {id, role} = req.body;
+        if(!id || !role) return res.status(400).json({message: "Id or role cannot be empty"});
 
-        if(!role){
-            const email = req.body.email;
-            if(!email) return res.status(400).json({message: "Email is required to asssign role"});
-            const person = await User.find({email});
-            return res.json({person});
-        }
-
-        const employeeId = req.body.employeeId;
-        const result = await User.findByIdAndUpdate(employeeId, {role: role}, {new: true});
+        const result = await User.findByIdAndUpdate(id, {role: role}, {new: true});
         if(!result) return res.json({message: "Could not change the role"});
 
         res.json({message: `${result.name} is ${result.role} now`});
@@ -46,4 +39,13 @@ const removeRole = async(req, res)=>{
     res.status(200).json({message: "Employee removed"});
 }
 
-module.exports = {fetchEmployee, assignRole, removeRole};
+const findTheGuy = async (req, res) => {
+    const email = req.query.email;
+    if(!email) return res.status(400).json({message: "Email is required"});
+
+    const person = await User.find({email});
+    if(!person) return res.status(404).json({message: "No person exist with this email"});
+
+    res.json({person, message: "Found the guy"});
+}
+module.exports = {fetchEmployee, assignRole, removeRole, findTheGuy};
