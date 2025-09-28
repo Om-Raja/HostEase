@@ -2,16 +2,14 @@ const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../middlewares/isLoggedIn");
 const {validateUserData, validateCareTakerData} = require("../middlewares/validateUserData");
-const isAdmin = require("../middlewares/isAdmin");
-const { updateStudentDetails, getStudentDetails, assignUserRole } = require("../controllers/userController");
-const isSuperAdmin = require("../middlewares/isSuperAdmin");
+const { updateStudentDetails, getStudentDetails } = require("../controllers/userController");
+const getBill = require("../controllers/mess/userBillController.js");
 
 router.route("/")
 .patch(isLoggedIn, validateUserData, updateStudentDetails)
 .get(isLoggedIn, getStudentDetails);
 
-// SuperAdmin: Assign role to any user
-router.patch("/assign-role", isLoggedIn, isSuperAdmin, assignUserRole);
+router.get("/getBill", isLoggedIn, getBill);
 
 router.patch("/admin", isLoggedIn, validateCareTakerData, updateStudentDetails);
 
