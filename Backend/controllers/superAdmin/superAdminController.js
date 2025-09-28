@@ -29,7 +29,7 @@ const assignRole = async(req, res) => {
         const result = await User.findByIdAndUpdate(employeeId, {role: role}, {new: true});
         if(!result) return res.json({message: "Could not change the role"});
 
-        res.json({message: `${employee.name} is ${role} now`});
+        res.json({message: `${result.name} is ${result.role} now`});
     }catch(err){
         console.error(err);
         res.status(500).json({message: "Something went wrong in assigning role"});
