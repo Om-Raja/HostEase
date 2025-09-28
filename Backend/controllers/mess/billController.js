@@ -54,7 +54,7 @@ const addBill = async (req, res) => {
 
 const getBill = async (req, res) => {
   try {
-    const month = req.params.month;
+    const month = req.query.month;
 
     const monthlyBill = await MessBill.find({ month });
     if (!monthlyBill) {
