@@ -120,7 +120,7 @@ const sendRoomRequest = async(req, res)=>{
     const {userEmail, cgpa, hostelNo} = req.body;
     const preferredRoomList = JSON.parse(req.body.preferredRoomList);
 
-    if(!preferredRoomList || preferredRoomList?.length === 0 || !userEmail || !cgpa || hostelNo)
+    if(!preferredRoomList || preferredRoomList?.length === 0 || !userEmail || !cgpa || !hostelNo)
       return res.status(400).json({success: false, error: "Room number, email, hostelNo and CGPA are required"});
 
     const room = await Room.find({roomNumber: {$in: preferredRoomList}, hostel: hostelNo}).select("_id");
