@@ -3,203 +3,234 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hostel Allotment - Caretaker</title>
+  <title>Hostel Allotment - Caretaker Dashboard</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    body { background:#f5f7fb; font-family:Inter,Arial,Helvetica,sans-serif; padding:24px; }
-    .table-wrap { background:#fff; padding:16px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); }
-    .small-note { font-size:0.9rem; color:#6b7280; }
-    .assigned { background:#e6ffed; }
+    body {
+      background: #f5f7fb;
+      font-family: "Inter", Arial, sans-serif;
+      padding: 24px;
+    }
+    .table-wrap {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .assigned {
+      background: #e8fce8;
+    }
+    .table thead {
+      background-color: #f0f2f5;
+    }
   </style>
 </head>
 <body>
   <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="m-0">Hostel Allotment Requests</h4>
-      <div>
-        <button id="refreshBtn" class="btn btn-light btn-sm">Refresh</button>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center gap-2">
+        <a href="../dashboard.html" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+        <h4 class="m-0 fw-semibold" class>Hostel Allotment Requests</h4>
       </div>
+      <button id="refreshBtn" class="btn btn-outline-primary btn-sm">Refresh</button>
     </div>
 
     <div class="table-wrap">
       <div class="table-responsive">
-        <table class="table table-hover align-middle" id="requestsTable">
+        <table class="table table-hover align-middle">
           <thead class="table-light">
             <tr>
               <th>Name</th>
               <th>CRN</th>
               <th>URN</th>
+              <th>Email</th>
               <th>Mobile</th>
               <th>Branch</th>
               <th>CGPA</th>
+              <th>Hostel No</th>
               <th>Preferences</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="requestsBody">
-            <!-- rows -->
+            <tr><td colspan="10" class="text-center text-muted">Loading...</td></tr>
           </tbody>
         </table>
       </div>
-      <div id="msg" class="mt-2 small-note"></div>
+      <div id="msg" class="mt-2 small text-secondary"></div>
     </div>
   </div>
 
-  <!-- Assign modal -->
+  <!-- Assign Modal -->
   <div class="modal fade" id="assignModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Assign Room</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <div id="assignInfo" class="mb-2"></div>
-          <label class="form-label">Choose from preferences or enter room</label>
+          <div id="assignInfo" class="mb-3"></div>
+          <label class="form-label">Choose from preferences or enter manually</label>
           <select id="prefSelect" class="form-select mb-2"></select>
-          <input id="customRoom" class="form-control" placeholder="Or type room to assign (optional)">
-          <div id="assignAlert" class="mt-2"></div>
+          <input id="customRoom" class="form-control" placeholder="Or type room number">
+          <div id="assignAlert" class="mt-3"></div>
         </div>
         <div class="modal-footer">
-          <button id="confirmAssignBtn" type="button" class="btn btn-primary">Assign</button>
+          <button id="confirmAssignBtn" type="button" class="btn btn-primary">Confirm Assign</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </div>
   </div>
 
-<script>
-const requestsBody = document.getElementById('requestsBody');
-const msg = document.getElementById('msg');
-const refreshBtn = document.getElementById('refreshBtn');
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const requestsBody = document.getElementById('requestsBody');
+    const msg = document.getElementById('msg');
+    const refreshBtn = document.getElementById('refreshBtn');
 
-let currentRequests = [];
-let currentRequestId = null;
-let currentPreferences = [];
+    let currentRequests = [];
+    let currentRequestId = null;
+    let currentPreferences = [];
 
-async function fetchRequests() {
-  msg.textContent = 'Loading...';
-  try {
-    const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:3000/api/requests', {
-      method: 'GET',
-      headers: {
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    // ✅ Fetch Requests
+    async function fetchRequests() {
+      msg.textContent = 'Fetching requests...';
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = '../../login.html';
+          return;
+        }
+
+        const res = await fetch('http://localhost:3000/api/request', {
+          method: 'GET',
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch requests');
+        const data = await res.json();
+
+        // Handle array or object format
+        currentRequests = Array.isArray(data) ? data : (data.requests || []);
+        renderTable();
+        msg.textContent = '';
+      } catch (err) {
+        console.error(err);
+        msg.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    // ✅ Render Table
+    function renderTable() {
+      requestsBody.innerHTML = '';
+
+      if (!currentRequests.length) {
+        requestsBody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">No requests found</td></tr>';
+        return;
+      }
+
+      currentRequests.forEach(req => {
+        const student = req.requester || {};
+        const tr = document.createElement('tr');
+        if (req.assignedRoom) tr.classList.add('assigned');
+
+        tr.innerHTML = `
+          <td>${student.name || '-'}</td>
+          <td>${student.crn || '-'}</td>
+          <td>${student.urn || '-'}</td>
+          <td>${student.email || '-'}</td>
+          <td>${student.mobile || '-'}</td>
+          <td>${student.branch || '-'}</td>
+          <td>${student.cgpa || '-'}</td>
+          <td>${student.hostelNo || '-'}</td>
+          <td>${(req.preferredRoomList || []).join(', ') || '-'}</td>
+          <td>
+            ${req.assignedRoom
+              ? `<span class="badge bg-success">Assigned: ${req.assignedRoom}</span>`
+              : `<button class="btn btn-sm btn-primary assign-btn" data-id="${req._id}">Assign</button>`
+            }
+          </td>
+        `;
+        requestsBody.appendChild(tr);
+      });
+
+      document.querySelectorAll('.assign-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = e.currentTarget.dataset.id;
+          openAssignModal(id);
+        });
+      });
+    }
+
+    // ✅ Open Assign Modal
+    function openAssignModal(requestId) {
+      const req = currentRequests.find(r => r._id === requestId);
+      if (!req) return alert('Request not found');
+      const student = req.requester || {};
+
+      currentRequestId = requestId;
+      currentPreferences = req.preferredRoomList || [];
+
+      document.getElementById('assignInfo').innerHTML = `
+        <p><strong>Student:</strong> ${student.name}</p>
+        <p><strong>Email:</strong> ${student.email}</p>
+        <p><strong>Branch:</strong> ${student.branch}</p>
+        <p><strong>CGPA:</strong> ${student.cgpa}</p>
+        <p><strong>Preferences:</strong> ${currentPreferences.join(', ') || '-'}</p>
+      `;
+
+      const prefSelect = document.getElementById('prefSelect');
+      prefSelect.innerHTML = '<option value="">-- Select preference --</option>';
+      currentPreferences.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.text = p;
+        prefSelect.appendChild(opt);
+      });
+
+      document.getElementById('customRoom').value = '';
+      document.getElementById('assignAlert').innerHTML = '';
+      new bootstrap.Modal(document.getElementById('assignModal')).show();
+    }
+
+    // ✅ Assign Room
+    document.getElementById('confirmAssignBtn').addEventListener('click', async () => {
+      const chosen = document.getElementById('prefSelect').value.trim();
+      const custom = document.getElementById('customRoom').value.trim();
+      const assignAlert = document.getElementById('assignAlert');
+      const assignedRoom = custom || chosen;
+
+      if (!assignedRoom) {
+        assignAlert.innerHTML = '<div class="alert alert-danger p-2">Please select or enter a room number.</div>';
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`http://localhost:3000/api/room/assign/${currentRequestId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `${token}`
+          },
+          body: JSON.stringify({ assignedRoom })
+        });
+
+        if (!res.ok) throw new Error('Assignment failed');
+        bootstrap.Modal.getInstance(document.getElementById('assignModal')).hide();
+        await fetchRequests();
+        msg.innerHTML = '<div class="alert alert-success mt-2">Room assigned successfully!</div>';
+      } catch (err) {
+        assignAlert.innerHTML = `<div class="alert alert-danger p-2">${err.message}</div>`;
       }
     });
-    if (!res.ok) {
-      const e = await res.json().catch(()=>({message:'failed'}));
-      throw new Error(e.message || 'Failed to fetch');
-    }
-    const data = await res.json();
-    currentRequests = Array.isArray(data) ? data : (data.requests || []);
-    renderTable();
-    msg.textContent = '';
-  } catch (err) {
-    console.error(err);
-    msg.textContent = 'Error loading requests.';
-  }
-}
 
-function renderTable(){
-  requestsBody.innerHTML = '';
-  if (!currentRequests.length) {
-    requestsBody.innerHTML = '<tr><td colspan="8" class="text-center">No requests found</td></tr>';
-    return;
-  }
-  currentRequests.forEach(req => {
-    const tr = document.createElement('tr');
-    if (req.assigned) tr.classList.add('assigned');
-    tr.innerHTML = `
-      <td>${req.name || 'N/A'}</td>
-      <td>${req.crn || 'N/A'}</td>
-      <td>${req.urn || 'N/A'}</td>
-      <td>${req.mobile || 'N/A'}</td>
-      <td>${req.branch || 'N/A'}</td>
-      <td>${req.cgpa ?? 'N/A'}</td>
-      <td>${(req.preferences || []).join(', ')}</td>
-      <td>
-        ${req.assigned ? `<span class="badge bg-success">Assigned: ${req.assignedRoom}</span>` : `<button class="btn btn-sm btn-primary assign-btn" data-id="${req._id}">Assign</button>`}
-      </td>
-    `;
-    requestsBody.appendChild(tr);
-  });
-
-  // attach listeners
-  document.querySelectorAll('.assign-btn').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
-      const id = e.currentTarget.dataset.id;
-      openAssignModal(id);
-    });
-  });
-}
-
-function openAssignModal(requestId){
-  const req = currentRequests.find(r=>r._id===requestId);
-  if(!req) return;
-  currentRequestId = requestId;
-  currentPreferences = req.preferences || [];
-  document.getElementById('assignInfo').innerHTML = `<strong>${req.name}</strong> — Preferences: ${currentPreferences.join(', ')}`;
-  const prefSelect = document.getElementById('prefSelect');
-  prefSelect.innerHTML = '';
-  const noneOpt = document.createElement('option');
-  noneOpt.value = '';
-  noneOpt.text = '-- choose preference --';
-  prefSelect.appendChild(noneOpt);
-  currentPreferences.forEach(p=>{
-    const opt = document.createElement('option');
-    opt.value = p;
-    opt.text = p;
-    prefSelect.appendChild(opt);
-  });
-  document.getElementById('customRoom').value = '';
-  document.getElementById('assignAlert').innerHTML = '';
-  const modalEl = new bootstrap.Modal(document.getElementById('assignModal'));
-  modalEl.show();
-}
-
-document.getElementById('confirmAssignBtn').addEventListener('click', async ()=>{
-  const chosen = document.getElementById('prefSelect').value.trim();
-  const custom = document.getElementById('customRoom').value.trim();
-  const assignAlert = document.getElementById('assignAlert');
-  assignAlert.innerHTML = '';
-
-  const assignedRoom = custom || chosen;
-  if (!assignedRoom) {
-    assignAlert.innerHTML = '<div class="alert alert-danger p-2">Select or enter a room to assign.</div>';
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:3000/api/room/assign', {
-      method: 'POST',
-      headers: {
-        'Content-Type':'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-      },
-      body: JSON.stringify({ requestId: currentRequestId, assignedRoom })
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(()=>({message:'failed'}));
-      throw new Error(err.message || 'Assign failed');
-    }
-    // close modal and refresh
-    const modal = bootstrap.Modal.getInstance(document.getElementById('assignModal'));
-    modal.hide();
-    await fetchRequests();
-  } catch (err) {
-    console.error(err);
-    document.getElementById('assignAlert').innerHTML = `<div class="alert alert-danger p-2">${err.message}</div>`;
-  }
-});
-
-refreshBtn.addEventListener('click', fetchRequests);
-
-// initial load
-fetchRequests();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    refreshBtn.addEventListener('click', fetchRequests);
+    fetchRequests();
+  </script>
 </body>
 </html>
