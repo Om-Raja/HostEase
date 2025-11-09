@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .preferences-note {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Hostel Room Application</h3>
+                <a href="../userDashboard.html" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+
+            <form id="applyForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Registered Email *</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cgpa" class="form-label">Current SGPA (Previous Semester) *</label>
+                    <input type="number" class="form-control" id="cgpa" min="0" max="10" step="0.01" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="preferences" class="form-label">Room Preferences *</label>
+                    <input type="text" class="form-control" id="preferences" required>
+                    <div class="preferences-note mt-1">
+                        Enter up to 10 room preferences, separated by commas (e.g., 1,2,3 etc)
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Application</button>
+                    <button type="button" id="resetBtn" class="btn btn-outline-secondary">Reset</button>
+                </div>
+            </form>
+
+            <div id="alertWrap" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertWrap = document.getElementById('alertWrap');
+            alertWrap.innerHTML = '';
+
+            // Get form values
+            const email = document.getElementById('email').value.trim();
+            const cgpa = parseFloat(document.getElementById('cgpa').value);
+            const preferencesString = document.getElementById('preferences').value.trim();
+            const preferences = preferencesString.split(',').map(p => p.trim()).filter(p => p);
+
+            // Validate CGPA
+            if (cgpa < 0 || cgpa > 10) {
+                alertWrap.innerHTML = `
+                    <div class="alert alert-danger">
+                        SGPA must be between 0 and 10
+                    </div>`;
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${token}`
+                    },
+                    body: JSON.stringify({
+                        email,
+                        cgpa,
+                        preferences
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alertWrap.innerHTML = `
+                        <div class="alert alert-success">
+                            Application submitted successfully!
+                        </div>`;
+                    document.getElementById('applyForm').reset();
+                } else {
+                    throw new Error(data.message || 'Failed to submit application');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alertWrap.innerHTML = `
+                    <div class="alert alert-danger">
+                        ${error.message || 'An error occurred. Please try again.'}
+                    </div>`;
+            }
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            document.getElementById('applyForm').reset();
+            document.getElementById('alertWrap').innerHTML = '';
+        });
+    </script>
+</body>
+</html>
