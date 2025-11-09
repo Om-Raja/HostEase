@@ -1,6 +1,7 @@
 const Room = require("../../models/room.model.js");
 const Request = require("../../models/roomRequest.model.js");
 const User = require("../../models/user.js");
+const nodemailer = require("nodemailer");
 
 const getAllRoomData = async (req, res) => {
   try {
@@ -39,12 +40,10 @@ const addRoom = async (req, res) => {
 
     const careTaker = await User.findById(req.user._id);
     if (hostel != careTaker.hostelNo)
-      return res
-        .status(403)
-        .json({
-          success: false,
-          error: `You can add room for hsotel no ${careTaker.hostelNo} only`,
-        });
+      return res.status(403).json({
+        success: false,
+        error: `You can add room for hsotel no ${careTaker.hostelNo} only`,
+      });
 
     const doesRoomExist = await Room.findOne({ roomNumber, hostel });
     if (doesRoomExist)
@@ -101,13 +100,11 @@ const editRoom = async (req, res) => {
 
     const response = await oldRoom.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Room data updated successfully!",
-        data: response,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Room data updated successfully!",
+      data: response,
+    });
   } catch (err) {
     console.error("Error in editRoom controller", err.message);
     res.status(500).json({ success: false, error: "Something went wrong" });
@@ -128,13 +125,11 @@ const deleteRoom = async (req, res) => {
         .staus(404)
         .json({ success: false, error: "Room doesn't exist" });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Room deleted successfully!",
-        data: response,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Room deleted successfully!",
+      data: response,
+    });
   } catch (err) {
     console.error("Error in deleteRoom controller", err.message);
     res.status(500).json({ success: false, error: "Something went wrong" });
@@ -153,12 +148,10 @@ const sendRoomRequest = async (req, res) => {
       !cgpa ||
       !hostelNo
     )
-      return res
-        .status(400)
-        .json({
-          success: false,
-          error: "Room number, email, hostelNo and CGPA are required",
-        });
+      return res.status(400).json({
+        success: false,
+        error: "Room number, email, hostelNo and CGPA are required",
+      });
 
     // Ensure room list is an array
     if (!Array.isArray(preferredRoomList)) {
@@ -209,7 +202,7 @@ const sendRoomRequest = async (req, res) => {
 const showRoomRequest = async (req, res) => {
   try {
     const careTaker = await User.findById(req.user._id);
-    const allRequest = await Request.find({hostelNo: careTaker.hostelNo})
+    const allRequest = await Request.find({ hostelNo: careTaker.hostelNo })
       .populate({
         path: "room",
         select: "roomNumber floor block hostel owner",
@@ -225,13 +218,11 @@ const showRoomRequest = async (req, res) => {
         .status(404)
         .json({ success: false, message: "No request found" });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Fetched all requests for room.",
-        data: allRequest,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Fetched all requests for room.",
+      data: allRequest,
+    });
   } catch (err) {
     console.error("Error in showRoomRequest controller", err.message);
     res.status(500).json({ success: false, error: "Something went wrong" });
@@ -247,13 +238,22 @@ const actOnRoomRequest = async (req, res) => {
         .json({ success: false, error: "Request Id is required" });
 
     const request = await Request.findById(reqId).populate([
-      { path: "room", select: "_id, roomNumber owner" },
-      { path: "requester", select: "_id, name" },
+      { path: "room", select: "_id roomNumber owner" },
+      { path: "requester", select: "_id name email" },
     ]);
     if (!request)
       return res
         .status(404)
         .json({ success: false, error: "This request doesn't exist" });
+
+    // Send OTP via email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
     //remove user from previous room
     await Room.updateMany(
@@ -270,12 +270,10 @@ const actOnRoomRequest = async (req, res) => {
 
         //update user details
         if (!response)
-          return res
-            .status(400)
-            .json({
-              success: false,
-              error: `Couldn't assign room number ${room.roomNumber} to ${request.requester.name}`,
-            });
+          return res.status(400).json({
+            success: false,
+            error: `Couldn't assign room number ${room.roomNumber} to ${request.requester.name}`,
+          });
 
         await User.findByIdAndUpdate(request.requester._id, {
           room: room.roomNumber,
@@ -284,22 +282,27 @@ const actOnRoomRequest = async (req, res) => {
 
         await Request.findByIdAndDelete(reqId);
 
-        return res
-          .status(200)
-          .json({
-            success: true,
-            message: `Assigned room number ${room.roomNumber} to ${request.requester.name}`,
-            data: response,
-          });
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: request.requester.email,
+          subject: `Room allocation in Hostel Number ${request.hostelNo}`,
+          text: `Congratulations! ${request.requester.name}. You have been assigned Room No: ${room.roomNumber} in Hostel No: ${request.hostelNo}`,
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.status(200).json({
+          success: true,
+          message: `Assigned room number ${room.roomNumber} to ${request.requester.name}`,
+          data: response,
+        });
       }
     }
 
-    res
-      .status(409)
-      .json({
-        success: false,
-        error: `All request rooms are already occupied fully. Please request again for ohter room numbers`,
-      });
+    res.status(409).json({
+      success: false,
+      error: `All request rooms are already occupied fully. Please request again for ohter room numbers`,
+    });
   } catch (err) {
     console.error("Error in actOnRoomRequest controller", err.message);
     res.status(500).json({ success: false, error: "Something went wrong" });

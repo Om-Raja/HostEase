@@ -8,7 +8,7 @@ const sendOtpController = async (req, res) => {
 
     const doesAlredyExist = await Otp.findOne({email});
     if(doesAlredyExist){
-        return res.status(400).json({message: "OTP is already sent to your email ", email});
+        return res.status(409).json({message: "OTP is already sent to your email ", email});
     }
     
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
