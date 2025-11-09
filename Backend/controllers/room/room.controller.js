@@ -185,6 +185,14 @@ const actOnRoomRequest = async(req, res)=>{
     if(!request)
       return res.status(404).json({success: false, error: "This request doesn't exist"});
 
+    //remove user from previous room
+    await Room.updateMany(
+      { owner: request.requester._id },
+      { $pull: { owner: request.requester._id }},
+    );
+
+
+    //find available room, assign student to first available room found
     for(let room of request.room){
       if(room.owner.length < 3){
         const availabeRoom = await Room.findById(room._id);
