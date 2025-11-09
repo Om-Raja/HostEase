@@ -5,6 +5,8 @@ const User = require("../../models/user.js");
 const getAllRoomData = async (req, res) => {
   try {
     const careTaker = await User.findById(req.user._id);
+    console.log(careTaker);
+
     const allRoomData = await Room.find({hostel: careTaker.hostelNo}).populate([
       {path: "owner", select: "_id name email branch urn branch batch"}
     ]);
@@ -33,6 +35,10 @@ const addRoom = async (req, res) => {
         success: false,
         error: "Room Number, Floor, Block and Hostel number are required",
       });
+
+    const careTaker = await User.findById(req.user._id);
+    if(hostel != careTaker.hostelNo)
+      return res.status(403).json({success: false, error: `You can add room for hsotel no ${careTaker.hostelNo} only`});
 
     const doesRoomExist = await Room.findOne({roomNumber, hostel});
     if(doesRoomExist)
