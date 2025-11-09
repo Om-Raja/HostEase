@@ -117,12 +117,16 @@ const deleteRoom = async (req, res) => {
 // Request controllers
 const sendRoomRequest = async(req, res)=>{
   try{
-    const {userEmail, cgpa, hostelNo} = req.body;
-    const preferredRoomList = JSON.parse(req.body.preferredRoomList);
+    const {userEmail, cgpa, hostelNo, preferredRoomList} = req.body;
 
     if(!preferredRoomList || preferredRoomList?.length === 0 || !userEmail || !cgpa || !hostelNo)
       return res.status(400).json({success: false, error: "Room number, email, hostelNo and CGPA are required"});
 
+        // Ensure room list is an array
+    if (!Array.isArray(preferredRoomList)) {
+      return res.status(400).json({ success: false, error: "preferredRoomList must be an array" });
+    }
+    
     const room = await Room.find({roomNumber: {$in: preferredRoomList}, hostel: hostelNo}).select("_id");
     if(!room)
       return res.status(404).json({success: false, error: "Room doesn't exist"});

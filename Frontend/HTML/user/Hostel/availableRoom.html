@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Hostel Rooms</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header-bar h3 {
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .table thead {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-bar">
+            <a href="../userDashboard.html" class="btn btn-outline-secondary btn-sm">Back to Dashboard</a>
+            <h3>Available Hostel Rooms</h3>
+            <button id="refreshBtn" class="btn btn-outline-primary btn-sm">Refresh</button>
+        </div>
+
+        <!-- Room Table -->
+        <div class="table-container mt-4">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Hostel</th>
+                            <th>Block</th>
+                            <th>Room No</th>
+                            <th>Floor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="roomTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">Loading available rooms...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="messageContainer" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+        const messageContainer = document.getElementById('messageContainer');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        // ✅ Fetch rooms from backend
+        async function loadRooms() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+
+                const response = await fetch('http://localhost:3000/api/room', {
+                    method: 'GET',
+                    headers: { 'Authorization': `${token}` }
+                });
+
+                if (!response.ok) throw new Error('Failed to load rooms');
+
+                const data = await response.json();
+                const roomTableBody = document.getElementById('roomTableBody');
+
+                if (!data.data || !data.data.length) {
+                    roomTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No rooms available</td>
+                        </tr>`;
+                    return;
+                }
+
+                // ✅ Populate table with available rooms
+                roomTableBody.innerHTML = data.data.map(room => `
+                    <tr>
+                        <td>${room.hostel || 'N/A'}</td>
+                        <td>${room.block || 'N/A'}</td>
+                        <td>${room.roomNumber || 'N/A'}</td>
+                        <td>${room.floor || 'N/A'}</td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+                messageContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        Failed to load rooms: ${error.message}
+                    </div>`;
+            }
+        }
+
+        // ✅ Refresh button reloads rooms
+        refreshBtn.addEventListener('click', loadRooms);
+
+        // ✅ Load rooms when page loads
+        document.addEventListener('DOMContentLoaded', loadRooms);
+    </script>
+</body>
+</html>
