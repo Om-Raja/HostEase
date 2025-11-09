@@ -135,7 +135,8 @@ const sendRoomRequest = async(req, res)=>{
     const newRequest = new Request({
       room,
       requester: student._id,
-      cgpa
+      cgpa,
+      hostelNo
     });
 
     const response = await newRequest.save();
@@ -185,6 +186,7 @@ const actOnRoomRequest = async(req, res)=>{
     if(!request)
       return res.status(404).json({success: false, error: "This request doesn't exist"});
 
+
     //remove user from previous room
     await Room.updateMany(
       { owner: request.requester._id },
@@ -198,9 +200,14 @@ const actOnRoomRequest = async(req, res)=>{
         const availabeRoom = await Room.findById(room._id);
         availabeRoom.owner.push(request.requester._id);
         const response = await availabeRoom.save();
+
+        //update user detail
+        
         if(!response)
           return res.status(400).json({success: false, error: `Couldn't assign room number ${room.roomNumber} to ${request.requester.name}`});
-
+        
+        await User.findByIdAndUpdate(request.requester._id, {room: room.roomNumber, hostelNo: request.hostelNo});
+        
         return res.status(200).json({success: true, message: `Assigned room number ${room.roomNumber} to ${request.requester.name}`, data: response});
       }
     }
