@@ -63,6 +63,9 @@ const loginController = async function (req, res) {
           { expiresIn: "24h" },
         );
 
+        req.user = {email: user.email, role: user.role, _id: user._id, hostelNo: user.hostelNo};
+
+
         return res.status(200).json({
           message: "Login successful",
           success: true,

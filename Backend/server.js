@@ -16,8 +16,11 @@ const studentNoticeRouter = require("./Routes/noticeRoute");
 const adminLeaveRouter = require("./Routes/admin-routes/adminLeaveRoutes");
 const superAdminRouter = require("./Routes/super-admin/superAdminRoute");
 const messRoutes = require("./Routes/mess-routes/messRoutes.js")
+const roomRequestRoutes = require("./Routes/room-allocation/request.route.js");
+const roomRoutes = require("./Routes/room-allocation/room.route.js");
 const globalCatch = require("./middlewares/globalCatch");
 require("./models/db");
+
 
 const PORT = process.env.PORT || 8080;
 
@@ -40,6 +43,8 @@ app.use("/api/admin/notice", adminNoticeRouter);
 app.use("/api/student/notice", studentNoticeRouter);
 app.use("/api/superAdmin", superAdminRouter);
 app.use("/api/mess", messRoutes);
+app.use("/api/request", roomRequestRoutes);
+app.use("/api/room", roomRoutes);
 
 // Handle undefined routes
 app.use((req, res, next)=>{
