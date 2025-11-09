@@ -4,8 +4,10 @@ const User = require("../../models/user.js");
 
 const getAllRoomData = async (req, res) => {
   try {
-    const allRoomData = await Room.find({});
-    if (allRoomData || allRoomData.length === 0)
+    const allRoomData = await Room.find({}).populate([
+      {path: "owner", select: "_id name email branch urn branch batch"}
+    ]);
+    if (!allRoomData || allRoomData.length === 0)
       return res
         .status(404)
         .json({ success: false, error: "There are no room data" });
