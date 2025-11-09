@@ -102,7 +102,7 @@ const deleteRoom = async (req, res) => {
 }
 
 // Request controllers
-const handleRoomRequest = async(req, res)=>{
+const sendRoomRequest = async(req, res)=>{
   try{
     const {userEmail, cgpa} = req.body;
     const preferredRoomList = JSON.parse(req.body.preferredRoomList);
@@ -158,4 +158,36 @@ const showRoomRequest = async(req, res)=>{
     res.status(500).json({success: false, error: "Something went wrong"});
   }
 }
-module.exports = { showRoomRequest, handleRoomRequest, addRoom };
+
+const actOnRoomRequest = async(req, res)=>{
+  try{
+    const {reqId} = req.params;
+    if(!reqId)
+      return res.status(400).json({success: false, error: "Request Id is required"});
+    
+    const request = await Request.findById(reqId).populate([
+      {path: "room", select: "_id, roomNumber owner"},
+      {path: "requester", select: "_id, name"}
+    ]);
+    if(!request)
+      return res.status(404).json({success: false, error: "This request doesn't exist"});
+
+    for(let room of request.room){
+      if(room.owner.length < 3){
+        const availabeRoom = await Room.findById(room._id);
+        availabeRoom.owner.push(request.requester._id);
+        const response = await availabeRoom.save();
+        if(!response)
+          return res.status(400).json({success: false, error: `Couldn't assign room number ${room.roomNumber} to ${request.requester.name}`});
+
+        return res.status(200).json({success: true, message: `Assigned room number ${room.roomNumber} to ${request.requester.name}`, data: response});
+      }
+    }
+
+    res.status(409).json({success: false, error: `All request rooms are already occupied fully. Please request again for ohter room numbers`});
+  }catch(err){
+    console.error("Error in actOnRoomRequest controller", err.message);
+    res.status(500).json({success: false, error: "Something went wrong"});
+  }
+}
+module.exports = { showRoomRequest, sendRoomRequest, addRoom, getAllRoomData, editRoom, deleteRoom, actOnRoomRequest};
