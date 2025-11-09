@@ -80,7 +80,7 @@
           return;
         }
 
-        const res = await fetch('http://localhost:3000/api/request', {
+        const res = await fetch('https://hostease-631q.onrender.com/api/request', {
           method: 'GET',
           headers: {
             'Authorization': `${token}`
@@ -147,7 +147,7 @@
           if (!confirm('Are you sure you want to assign a room to this student?')) return;
 
           try {
-            const res = await fetch(`http://localhost:3000/api/request/${id}`, {
+            const res = await fetch(`https://hostease-631q.onrender.com/api/request/${id}`, {
               method: 'POST',
               headers: {
                 'Authorization': `${token}`,

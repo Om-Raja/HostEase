@@ -71,7 +71,7 @@
       // Fetch leave requests
       async function fetchLeaveRequests() {
         try {
-          const response = await fetch('http://localhost:3000/api/admin/leave', {
+          const response = await fetch('https://hostease-631q.onrender.com/api/admin/leave', {
             method: 'GET',
             headers: {
               'Authorization': `${token}`
@@ -126,7 +126,7 @@
       // Update leave request status
       async function updateLeaveStatus(leaveId, status) {
         try {
-          const response = await fetch(`http://localhost:3000/api/admin/leave/${leaveId}`, {
+          const response = await fetch(`https://hostease-631q.onrender.com/api/admin/leave/${leaveId}`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

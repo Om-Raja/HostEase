@@ -112,7 +112,7 @@
       // Fetch queries
       async function fetchQueries() {
         try {
-          const response = await fetch('http://localhost:3000/api/admin/query', {
+          const response = await fetch('https://hostease-631q.onrender.com/api/admin/query', {
             method: 'GET',
             headers: {
               'Authorization': `${token}`
@@ -172,7 +172,7 @@
         }
 
         try {
-          const response = await fetch(`http://localhost:3000/api/admin/query/${selectedQueryId}`, {
+          const response = await fetch(`https://hostease-631q.onrender.com/api/admin/query/${selectedQueryId}`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',

@@ -89,7 +89,7 @@
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/api/superAdmin?email=${email}`, {
+        const response = await fetch(`https://hostease-631q.onrender.com/api/superAdmin?email=${email}`, {
           method: 'GET',
           headers: {
             'Authorization': `${token}`
@@ -144,7 +144,7 @@
 
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch(`http://localhost:3000/api/superAdmin`, {
+        const response = await fetch(`https://hostease-631q.onrender.com/api/superAdmin`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

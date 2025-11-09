@@ -97,7 +97,7 @@
     // Fetch complaints
     async function fetchComplaints() {
       try {
-        const response = await fetch('http://localhost:3000/api/admin/complaint', {
+        const response = await fetch('https://hostease-631q.onrender.com/api/admin/complaint', {
           method: 'GET',
           headers: {
             'Authorization': `${token}`
@@ -164,7 +164,7 @@
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/api/admin/complaint/${selectedComplaintId}`, {
+        const response = await fetch(`https://hostease-631q.onrender.com/api/admin/complaint/${selectedComplaintId}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

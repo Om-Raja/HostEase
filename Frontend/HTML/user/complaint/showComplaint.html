@@ -96,7 +96,7 @@
             fetchComplaints();
 
             function fetchComplaints() {
-                fetch('http://localhost:3000/api/complaint', {
+                fetch('https://hostease-631q.onrender.com/api/complaint', {
                     method: 'GET',
                     headers: {
                         'Authorization': `${token}`,
@@ -193,7 +193,7 @@
                 buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
                 buttonElement.disabled = true;
                 
-                fetch(`http://localhost:3000/api/complaint/${complaintId}`, {
+                fetch(`https://hostease-631q.onrender.com/api/complaint/${complaintId}`, {
                     method: 'PATCH',
                     headers: {
                         'Authorization': `${token}`,

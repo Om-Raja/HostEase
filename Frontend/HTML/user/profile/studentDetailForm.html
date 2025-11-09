@@ -186,7 +186,7 @@
         };
 
         try {
-          const response = await fetch('http://localhost:3000/api/user', {
+          const response = await fetch('https://hostease-631q.onrender.com/api/user', {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -219,7 +219,7 @@
   // Fetch user details and prefill the form
   async function fetchUserDetails() {
     try {
-      const response = await fetch('http://localhost:3000/api/user', {
+      const response = await fetch('https://hostease-631q.onrender.com/api/user', {
         method: 'GET',
         headers: {
           'Authorization': `${localStorage.getItem('token')}`
