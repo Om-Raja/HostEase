@@ -4,7 +4,8 @@ const User = require("../../models/user.js");
 
 const getAllRoomData = async (req, res) => {
   try {
-    const allRoomData = await Room.find({}).populate([
+    const careTaker = await User.findById(req.user._id);
+    const allRoomData = await Room.find({hostel: careTaker.hostelNo}).populate([
       {path: "owner", select: "_id name email branch urn branch batch"}
     ]);
     if (!allRoomData || allRoomData.length === 0)
