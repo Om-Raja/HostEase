@@ -1,716 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <title>HostEase</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../CSS/index.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Requests | Caretaker Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
 
+    header {
+      background-color: #324a8a;
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
 
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    header button {
+      background-color: #fff;
+      color: #324a8a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    header button:hover {
+      background-color: #e0e0e0;
+    }
+
+    main {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .request-card {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .request-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .request-card h2 {
+      margin-top: 0;
+      color: #324a8a;
+    }
+
+    .request-card p {
+      margin: 4px 0;
+      font-size: 0.9em;
+    }
+
+    .request-card hr {
+      margin: 10px 0;
+      border: 0;
+      border-top: 1px solid #ddd;
+    }
+
+    .approve-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #324a8a;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .approve-btn:hover {
+      background-color: #283a6a;
+    }
+
+    #notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      display: none;
+    }
+
+    .success {
+      background-color: #28a745;
+    }
+
+    .error {
+      background-color: #d9534f;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+      grid-column: 1 / -1;
+      margin-top: 20px;
+    }
+  </style>
 </head>
-
 <body>
-  <div>
+  <header>
+    <h1>🏠 Caretaker Dashboard</h1>
+    <button id="refreshBtn">Refresh</button>
+  </header>
 
+  <div id="notification"></div>
 
+  <main id="requestsContainer">
+    <!-- Requests will be dynamically inserted here -->
+  </main>
 
+  <script>
+    const API_URL = "/api/request";
+    const requestsContainer = document.getElementById("requestsContainer");
+    const notification = document.getElementById("notification");
+    const refreshBtn = document.getElementById("refreshBtn");
 
-    <!-- Navbar -->
-    <div>
-      <nav class="navbar navbar-expand-sm navbar-dark fixed-top">
-        <div class="container-fluid">
-          <a class="navbar-brand" href=" ">
-            <img src="../images/gndec old.png" alt="Logo" style="width:60px;" class="rounded-pill">
-          </a>
+    // Fetch token from localStorage
+    const token = localStorage.getItem("token");
 
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+    // Function to show temporary notification
+    function showNotification(message, type) {
+      notification.textContent = message;
+      notification.className = type;
+      notification.style.display = "block";
+      setTimeout(() => (notification.style.display = "none"), 3000);
+    }
 
-          <div class="collapse navbar-collapse" id="collapsibleNavbar">
-            <div class="d-flex flex-column flex-sm-row gap-2 ms-sm-auto">
-              <button type="button" class="btn btn-info">
-                <a href="#" class="text-white text-decoration-none">Home</a>
-              </button>
-              <button type="button" class="btn btn-info">
-                <a href="#about1" class="text-white text-decoration-none">About</a>
-              </button>
-              <button type="button" class="btn btn-info">
-                <a href="#rule1" class="text-white text-decoration-none">Rules</a>
-              </button>
+    // Fetch all room requests
+    async function fetchRequests() {
+      requestsContainer.innerHTML = `<p class="loading">Loading requests...</p>`;
+      try {
+        const res = await fetch(API_URL, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${token}`,
+          },
+        });
 
-              <button type="button" class="btn btn-info">
-                <a href="#gallery1" class="text-white text-decoration-none">Gallery</a>
-              </button>
-              <button type="button" class="btn btn-info">
-                <a href="#faq1" class="text-white text-decoration-none">FAQ</a>
-              </button>
-              <button type="button" class="btn btn-info">
-                <a href="#contact1" class="text-white text-decoration-none">Contact</a>
-              </button>
+        const data = await res.json();
 
-              <!-- Sign-In Button -->
-              <button type="button" class="btn btn-info text-white" onclick="window.location.href='../HTML/login.html'">
-                Login
-              </button>
-
-
-
-              <button type="button" class="btn btn-info text-white" onclick="window.location.href='../HTML/sendOtp.html'">
-                SignUp
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
-
-    <style>
-      a {
-        text-decoration: none;
-        color: white;
-      }
-    </style>
-
-    <!-- opacity image -->
-
-    <div class="">
-      <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <h1>Welcome HostEase<br></h1>
-          <h3>A way of Simplyfying Hostel Life</h3>
-          <p>Guru Nanak Dev Engineering College, Gill Park, Ludhiana.</p>
-        </div>
-      </section>
-
-    </div>
-
-
-    <br>
-
-
-
-    <!-- About Section -->
-    <div id="about1">
-
-      <h2 class="text-center mb-4">About GNDEC</h2>
-      <section class="container my-5">
-
-        <div class="row justify-content-center">
-          <div class="col-md-10">
-            <div class="card shadow rounded-4 border-0 p-4">
-              <div class="card-body">
-                <h5 class="card-title text-info fw-bold mb-3">Guru Nanak Dev Engineering College (GNDEC)</h5>
-                <p class="card-text text-justify">
-                  Guru Nanak Dev Engineering College, one of the prestigious, oldest and minority institutions of
-                  Northern India, was established under the aegis of Nankana Sahib Education Trust (NSET) in 1956.
-                  NSET was founded in memory of the most sacred temple of Nankana Sahib, birth place of Guru Nanak Dev
-                  Ji.
-                  Shiromani Gurudwara Prabandhak Committee, Amritsar, a premier organization of universal brotherhood,
-                  is the main force behind the mission of "Removal of Economic Backwardness through Technology".
-                  NSET with the same mission established a Polytechnic in 1953 and Guru Nanak Dev Engineering College
-                  (GNDEC) in 1956.
-                  The Trust deed was registered on 24th February 1953 with a commitment by Nankana Sahib Education Trust
-                  to uplift the vast weaker section of Indian polity comprising Rural India by admitting 70% students
-                  every year from Rural Areas.
-                  This commitment was made to the nation on 8th April, 1956 and the foundation stone of the College was
-                  laid by Late Dr. Rajendra Prasad Ji, the First President of India.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-
-    <br>
-
-    <!-- rules -->
-
-    <div id="rule1">
-
-
-      <div class="rules-section card-style">
-        <h2><b>🏠 Basic Rules for GNDEC Hostelers</b></h2>
-        <h6>Click on the buttons to see the rules under the tabbed menu:</h6>
-
-        <!-- Tab buttons -->
-        <div class="tab">
-          <button class="tablinks" data-target="London">Rule-1</button>
-          <button class="tablinks" data-target="Paris">Rule-2</button>
-          <button class="tablinks" data-target="Tokyo">Rule-3</button>
-        </div>
-
-        <!-- Tab content -->
-        <div id="London" class="tabcontent">
-          <h3>Timely Entry & Exit:</h3>
-          <ul>
-            <li>All hostelers must return to the hostel before 9:00 PM.</li>
-            <li>Late entry without prior permission from the warden is strictly prohibited.</li>
-          </ul>
-        </div>
-
-        <div id="Paris" class="tabcontent">
-          <h3>Discipline & Conduct:</h3>
-          <ul>
-            <li>Maintain discipline and decorum.</li>
-            <li>No ragging, bullying, or abusive language.</li>
-          </ul>
-        </div>
-
-        <div id="Tokyo" class="tabcontent">
-          <h3>Cleanliness & Hygiene:</h3>
-          <ul>
-            <li>Keep rooms and surroundings clean.</li>
-            <li>No littering or damaging hostel property.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-
-    <br><br>
-
-
-
-
-
-
-
-
-
-    <!-- CAURSOEL -->
-    <!-- Section Title Outside the Card -->
-    <div id="gallery1">
-
-      <div class="container mt-5">
-        <h3 class="text-center mb-4 fw-bold">Hostel Image Gallery</h3>
-
-        <!-- Bootstrap Card with Carousel -->
-        <div class="card shadow-lg rounded-4 overflow-hidden">
-          <div class="card-body p-0">
-            <!-- Carousel -->
-            <div id="demo" class="carousel slide" data-bs-ride="carousel">
-
-              <!-- Indicators/dots -->
-              <div class="carousel-indicators">
-                <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
-              </div>
-
-              <!-- Slideshow -->
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img src="../images/hostel1.png" alt="Los Angeles" class="d-block w-100 carousel-img">
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5> Hostel-1</h5>
-                    <p>Guru Nanak Dev Engineering College Ludhiana</p>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <img src="../images/hostel 2.png" alt="Chicago" class="d-block w-100 carousel-img">
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5> Hostel-2</h5>
-                    <p>Guru Nanak Dev Engineering College Ludhiana</p>
-                  </div>
-                </div>
-                <div class="carousel-item">
-                  <img src="../images/hostel 3.jpg" alt="New York" class="d-block w-100 carousel-img">
-                  <div class="carousel-caption d-none d-md-block">
-                    <h5> Hostel-5</h5>
-                    <p>Guru Nanak Dev Engineering College Ludhiana</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Controls -->
-              <button class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          </div>
-
-          <div class="card-footer text-center bg-light">
-            <small class="text-muted">Swipe or use arrows to navigate through hostel views</small>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Custom CSS for Carousel -->
-    <style>
-      .carousel-img {
-        height: 70vh;
-        object-fit: cover;
-      }
-
-      @media (max-width: 768px) {
-        .carousel-img {
-          height: 50vh;
+        if (!data.success || !data.data.length) {
+          requestsContainer.innerHTML = `<p class="loading">No requests found.</p>`;
+          return;
         }
-      }
 
-      @media (max-width: 480px) {
-        .carousel-img {
-          height: 40vh;
+        renderRequests(data.data);
+      } catch (error) {
+        requestsContainer.innerHTML = `<p class="loading">Failed to load requests.</p>`;
+        showNotification("Error fetching requests.", "error");
+      }
+    }
+
+    // Render request cards
+    function renderRequests(requests) {
+      requestsContainer.innerHTML = "";
+      requests.forEach((req) => {
+        const requester = req.requester || {};
+        const room = req.room || {};
+
+        const card = document.createElement("div");
+        card.className = "request-card";
+        card.innerHTML = `
+          <h2>${requester.name || "Unknown Student"}</h2>
+          <p><strong>CRN:</strong> ${requester.crn || "N/A"}</p>
+          <p><strong>Email:</strong> ${requester.email || "N/A"}</p>
+          <p><strong>Mobile:</strong> ${requester.mobile || "N/A"}</p>
+          <p><strong>Batch:</strong> ${requester.batch || "N/A"}</p>
+          <hr>
+          <p><strong>Room No:</strong> ${room.roomNumber || "N/A"}</p>
+          <p><strong>Floor:</strong> ${room.floor || "N/A"}</p>
+          <p><strong>Block:</strong> ${room.block || "N/A"}</p>
+          <p><strong>Hostel:</strong> ${room.hostel || "N/A"}</p>
+          <button class="approve-btn" onclick="approveRequest('${req._id}')">Approve Request ✅</button>
+        `;
+        requestsContainer.appendChild(card);
+      });
+    }
+
+    // Approve request
+    async function approveRequest(reqId) {
+      if (!confirm("Are you sure you want to approve this request?")) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${reqId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showNotification(data.message, "success");
+          fetchRequests(); // Refresh list
+        } else {
+          showNotification(data.error || "Failed to approve request.", "error");
         }
+      } catch (error) {
+        showNotification("Error approving request.", "error");
       }
-
-      .card {
-        border: none;
-      }
-
-      .carousel-caption {
-        background-color: rgba(0, 0, 0, 0.4);
-        border-radius: 12px;
-        padding: 10px 15px;
-      }
-    </style>
-
-
-    <br><br>
-
-
-
-    <!-- FAQ  uses bootstrap accordian-->
-
-    <div id="faq1">
-
-
-      <div class="faq-section card-style">
-
-
-
-        <div class="container mt-3">
-          <h2>FAQ List for Gndec HostEase</h2>
-          <p><strong>Note:</strong> The <strong>data-bs-parent</strong> attribute makes sure that all collapsible
-            elements under the specified parent will be closed when one of the collapsible items is shown.</p>
-          <div id="accordion">
-            <div class="card">
-              <div class="card-header">
-                <a class="btn" data-bs-toggle="collapse" href="#collapseOne">
-                  What are the hostel entry and exit timings?
-                </a>
-              </div>
-              <div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
-                <div class="card-body">
-                  All residents must return by 9:00 PM unless prior permission is granted by the warden.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseTwo">
-                  How can I apply for hostel accommodation?
-                </a>
-              </div>
-              <div id="collapseTwo" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  You can apply through the official hostel portal or contact the hostel office during working hours.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseThree">
-                  Is late entry allowed in special cases?
-                </a>
-              </div>
-              <div id="collapseThree" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Yes, but only with prior written permission from the warden.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseFour">
-                  What items are allowed inside the hostel rooms?
-                </a>
-              </div>
-              <div id="collapseFour" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Essential items like books, clothes, laptops, and personal care products are allowed. Electrical
-                  appliances must be approved.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseFive">
-                  Are guests allowed in the hostel?
-                </a>
-              </div>
-              <div id="collapseFive" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Visitors are allowed only in the visitor’s lounge during specified hours. Overnight stays are not
-                  permitted.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseSix">
-                  How do I report maintenance issues?
-                </a>
-              </div>
-              <div id="collapseSix" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  You can report them using the hostel management app or inform the hostel office directly.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseSeven">
-                  Is there any dress code in the hostel?
-                </a>
-              </div>
-              <div id="collapseSeven" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  No formal dress code, but residents are expected to dress decently.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseEight">
-                  What is the procedure for vacating the hostel?
-                </a>
-              </div>
-              <div id="collapseEight" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Submit a hostel leaving form with the warden’s approval and clear all dues.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseNine">
-                  Are there any rules regarding noise levels?
-                </a>
-              </div>
-              <div id="collapseNine" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Yes, students are expected to maintain silence after 10:00 PM to avoid disturbing others.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseTen">
-                  What action is taken in case of indiscipline or ragging?
-                </a>
-              </div>
-              <div id="collapseTen" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Strict disciplinary actions are taken, including rustication and legal action as per anti-ragging
-                  laws.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header">
-                <a class="collapsed btn" data-bs-toggle="collapse" href="#collapseEleven">
-                  How do I register for the hostel online?
-                </a>
-              </div>
-              <div id="collapseEleven" class="collapse" data-bs-parent="#accordion">
-                <div class="card-body">
-                  Visit the official hostel registration portal, fill out the required form, upload documents, and
-                  submit. You'll receive a confirmation via email.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-      </div>
-    </div>
-
-
-
-
-
-
-    <!-- Bootstrap Registration Modal -->
-    <!-- Registration Modal -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center p-3">
-
-          <!-- Close Button -->
-          <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
-            aria-label="Close"></button>
-
-          <!-- Avatar Image -->
-          <img src="../images/user registration gif.png" class="rounded-circle mx-auto d-block"
-            style="width: 120px; margin-top: 1rem;" alt="User Image">
-
-          <!-- Title -->
-          <h5 class="mt-3 mb-4">Create Your Account</h5>
-
-          <!-- Bootstrap Alert -->
-          <div id="alertBox" class="alert alert-success d-none" role="alert">
-            Registration successful! Redirecting to login...
-          </div>
-
-          <!-- Modal Body -->
-          <div class="modal-body text-start">
-            <form id="registerForm">
-
-              <div class="mb-3">
-                <label for="crn" class="form-label fw-bold">CRN</label>
-                <input type="text" class="form-control" id="crn" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="name" class="form-label fw-bold">Name</label>
-                <input type="text" class="form-control" id="name" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="course" class="form-label fw-bold">Course</label>
-                <select class="form-select" id="course" required>
-                  <option selected disabled value="">Select Course</option>
-                  <option>B.Tech</option>
-                  <option>M.Tech</option>
-                  <option>MBA</option>
-                  <option>PhD</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="branch" class="form-label fw-bold">Branch</label>
-                <select class="form-select" id="branch" required>
-                  <option selected disabled value="">Select Branch</option>
-                  <option>CSE</option>
-                  <option>ECE</option>
-                  <option>ME</option>
-                  <option>EE</option>
-                  <option>CE</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="mobile" class="form-label fw-bold">Mobile</label>
-                <input type="tel" class="form-control" id="mobile" required pattern="[0-9]{10}"
-                  title="Enter 10-digit mobile number">
-              </div>
-
-              <div class="mb-3">
-                <label for="email" class="form-label fw-bold">Email</label>
-                <input type="email" class="form-control" id="email" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="password" class="form-label fw-bold">Password</label>
-                <input type="password" class="form-control" id="password" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="confirmPassword" class="form-label fw-bold">Confirm Password</label>
-                <input type="password" class="form-control" id="confirmPassword" required>
-              </div>
-
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="rememberMe">
-                <label class="form-check-label" for="rememberMe">Remember me</label>
-              </div>
-
-              <button type="submit" class="btn btn-success w-100 mb-2">Sign Up</button>
-
-              <div class="d-flex justify-content-end">
-                <a href="#" class="text-decoration-none">Already Register <strong><a href="../HTML/login.html"> Click
-                      Here </a></strong></a>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-
-    <!-- modal end -->
-
-
-
-
-
-
-
-    <br><br>
-
-    <!-- GNDEC GOOGLE MAP -->
-    <div id="contact1">
-
-      <h3 class="text-center mb-4 fw-bold">Reach Us</h3>
-      <div class="google map-1">
-        <!-- Google Map Embed -->
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13700.059606080651!2d75.85369892696195!3d30.85825780961487!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x391a828f09011b15%3A0xbf3f5b51dcc81b12!2sGuru%20Nanak%20Dev%20Engineering%20College!5e0!3m2!1sen!2sin!4v1745494611263!5m2!1sen!2sin"
-          width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
-
-
-
-      </div>
-    </div>
-    <style>
-      .google.map-1 {
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        margin: 40px auto;
-        padding: 10;
-        /* Remove padding for the aspect ratio */
-        max-width: 100%;
-        width: 80%;
-        /* Adjust width as needed to reduce size */
-        position: relative;
-        display: flex;
-        justify-content: center;
-        /* Centers content horizontally */
-        align-items: flex-start;
-        /* Aligns the map to the top */
-        aspect-ratio: 10/ 4;
-        /* Ensures a 3:2 aspect ratio */
-      }
-
-      .google.map-1 iframe {
-        width: 100%;
-        height: 100%;
-        border: 0;
-        object-fit: cover;
-        /* Ensures the map scales without distortion */
-      }
-
-      @media (max-width: 768px) {
-        .google.map-1 {
-          width: 90%;
-          /* Adjust width for smaller screens */
-          margin: 10px auto;
-        }
-      }
-    </style>
-
-    <!-- contact end -->
-
-
-
-
-
-
-
-
-    <!-- Footer start-->
-
-
-    <footer class="footer bg-dark text-light pt-5 pb-3">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-3 col-md-6 mb-4">
-            <h5 class="text-uppercase mb-3 text-white">Hostease</h5>
-            <p class="small">Simplifying hostel life at GNDEC, Ludhiana with smart management and seamless services.</p>
-            <a href="#" class="text-warning small">Learn more →</a>
-          </div>
-
-          <div class="col-lg-2 col-md-6 mb-4">
-            <h6 class="text-uppercase mb-3 text-white">Discover</h6>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-light small">Hostel Facilities</a></li>
-              <li><a href="#" class="text-light small">Student Services</a></li>
-              <li><a href="#" class="text-light small">Room Allotment</a></li>
-              <li><a href="#" class="text-light small">Support Desk</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-6 mb-4">
-            <h6 class="text-uppercase mb-3 text-white">About</h6>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-light small">Our Mission</a></li>
-              <li><a href="#" class="text-light small">The Team</a></li>
-              <li><a href="#" class="text-light small">Campus Life</a></li>
-              <li><a href="#" class="text-light small">News & Updates</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-2 col-md-6 mb-4">
-            <h6 class="text-uppercase mb-3 text-white">Resources</h6>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-light small">Hostel Rules</a></li>
-              <li><a href="#" class="text-light small">Important Forms</a></li>
-              <li><a href="#" class="text-light small">FAQs</a></li>
-              <li><a href="#" class="text-light small">Security & Safety</a></li>
-            </ul>
-          </div>
-
-          <div class="col-lg-3 col-md-6 mb-4">
-            <h6 class="text-uppercase mb-3 text-white">Connect with Us</h6>
-            <ul class="list-unstyled">
-              <li><a href="#" class="text-light small">Facebook</a></li>
-              <li><a href="#" class="text-light small">Instagram</a></li>
-              <li><a href="#" class="text-light small">Twitter</a></li>
-              <li><a href="#" class="text-light small">LinkedIn</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <hr class="border-light">
-
-        <div class="row align-items-center text-center text-md-start">
-          <div class="col-md-6 mb-3 mb-md-0">
-            <div class="partners small text-light">
-              Designed and Developed by
-              <a href="#" class="text-warning small ml-2">Genconian</a>
-            </div>
-          </div>
-
-
-          <div class="col-md-6">
-            <div class="copyright small text-light">
-              &copy; 2025 All rights reserved | Developed with ❤️ at <a href="#" class="text-warning">GNDEC Ludhiana</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center mt-3">
-          <a href="#" class="text-light mx-2 small">Terms of Service</a>
-          <a href="#" class="text-light mx-2 small">Privacy Policy</a>
-          <a href="#" class="text-light mx-2 small">Hostel Regulations</a>
-        </div>
-      </div>
-    </footer>
-
-    <!-- footer end -->
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
-
-    <!-- chatbot -->
-    <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
-    <script src="https://files.bpcontent.cloud/2025/04/30/18/20250430182546-RKVF8XUZ.js"></script>
-
-    <script src="../JAVASCRIPT/index.js"></script>
+    }
+
+    refreshBtn.addEventListener("click", fetchRequests);
+    fetchRequests();
+  </script>
 </body>
-
 </html>
