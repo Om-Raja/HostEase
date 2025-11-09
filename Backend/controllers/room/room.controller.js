@@ -92,7 +92,7 @@ const editRoom = async (req, res)=>{
 
 const deleteRoom = async (req, res) => {
     try{
-        const roomId = req.params;
+        const {roomId} = req.params;
         if(!roomId)
             return res.status(400).json({success: false, error: "Room Id is required"});
 

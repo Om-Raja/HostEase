@@ -5,7 +5,7 @@ const { isCareTaker } = require("../../middlewares/checkRole.js");
 
 router.post("/", isCareTaker, addRoom);
 router.get("/", isCareTaker, getAllRoomData);
-router.patch("/", isCareTaker, editRoom);
-router.delete("/", isCareTaker, deleteRoom);
+router.patch("/:roomId", isCareTaker, editRoom);
+router.delete("/:roomId", isCareTaker, deleteRoom);
 
 module.exports = router;
