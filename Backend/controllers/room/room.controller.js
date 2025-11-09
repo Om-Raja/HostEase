@@ -33,6 +33,10 @@ const addRoom = async (req, res) => {
         error: "Room Number, Floor, Block and Hostel number are required",
       });
 
+    const doesRoomExist = await Room.findOne({roomNumber, hostel});
+    if(doesRoomExist.length === 1)
+      return res.status(409).json({success: false, error: "Room already exist"});
+
     const newRoom = new Room({
       roomNumber,
       floor,
