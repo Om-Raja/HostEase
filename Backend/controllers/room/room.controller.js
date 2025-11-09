@@ -106,13 +106,13 @@ const deleteRoom = async (req, res) => {
 // Request controllers
 const sendRoomRequest = async(req, res)=>{
   try{
-    const {userEmail, cgpa} = req.body;
+    const {userEmail, cgpa, hostelNo} = req.body;
     const preferredRoomList = JSON.parse(req.body.preferredRoomList);
 
-    if(!preferredRoomList || preferredRoomList?.length === 0 || !userEmail || !cgpa)
-      return res.status(400).json({success: false, error: "Room number, email and CGPA are required"});
+    if(!preferredRoomList || preferredRoomList?.length === 0 || !userEmail || !cgpa || hostelNo)
+      return res.status(400).json({success: false, error: "Room number, email, hostelNo and CGPA are required"});
 
-    const room = await Room.find({roomNumber: {$in: preferredRoomList}}).select("_id");
+    const room = await Room.find({roomNumber: {$in: preferredRoomList}, hostel: hostelNo}).select("_id");
     if(!room)
       return res.status(404).json({success: false, error: "Room doesn't exist"});
 
