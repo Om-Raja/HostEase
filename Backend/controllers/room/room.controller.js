@@ -34,7 +34,7 @@ const addRoom = async (req, res) => {
       });
 
     const doesRoomExist = await Room.findOne({roomNumber, hostel});
-    if(doesRoomExist.length === 1)
+    if(doesRoomExist)
       return res.status(409).json({success: false, error: "Room already exist"});
 
     const newRoom = new Room({
