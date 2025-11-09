@@ -208,7 +208,8 @@ const sendRoomRequest = async (req, res) => {
 
 const showRoomRequest = async (req, res) => {
   try {
-    const allRequest = await Request.find({})
+    const careTaker = await User.findById(req.user._id);
+    const allRequest = await Request.find({hostelNo: careTaker.hostelNo})
       .populate({
         path: "room",
         select: "roomNumber floor block hostel owner",
@@ -222,7 +223,7 @@ const showRoomRequest = async (req, res) => {
     if (allRequest.length === 0)
       return res
         .status(404)
-        .json({ success: false, error: "No request found" });
+        .json({ success: false, message: "No request found" });
 
     res
       .status(200)
@@ -280,6 +281,8 @@ const actOnRoomRequest = async (req, res) => {
           room: room.roomNumber,
           hostelNo: request.hostelNo,
         });
+
+        await Request.findByIdAndDelete(reqId);
 
         return res
           .status(200)
